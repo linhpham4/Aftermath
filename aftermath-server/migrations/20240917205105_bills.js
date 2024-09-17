@@ -17,7 +17,7 @@ export function up(knex) {
     table.decimal("tax", 8, 2).notNullable();
     table.decimal("tip", 8, 2).notNullable();
     table.decimal("total", 8, 2).notNullable();
-    table.string("image_url").notNullable();
+    table.text("image_url").notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table
       .timestamp("updated_at")
