@@ -5,6 +5,19 @@ const knex = initKnex(configuration);
 
 //---------------------------------------------------------------------------------------------
 
+// Get data for all items
+const getAllItems = async (_req, res) => {
+    try {
+      const itemsList = await knex("items").select("id", "bill_id", "description");
+
+      res.status(200).json(itemsList);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+//---------------------------------------------------------------------------------------------
+
 // Get data for a specific item
 const getItem = async (req, res) => {
   try {
@@ -23,4 +36,4 @@ const getItem = async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-export { getItem };
+export { getAllItems, getItem };
