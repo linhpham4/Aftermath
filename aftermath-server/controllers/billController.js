@@ -58,6 +58,15 @@ const saveBill = async (req, res) => {
       }
     }
 
+    // Same check for line_items
+    for (const line_item of bill.line_items) {
+      for (const property in line_item) {
+        if (line_item[property] === null) {
+          line_item[property] = 0;
+        }
+      }
+    }
+
     /* 
       ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
       │ host_id will change dynamically later when there are multiple users                                                         │
