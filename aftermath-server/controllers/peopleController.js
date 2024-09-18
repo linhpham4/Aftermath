@@ -47,10 +47,10 @@ const addPerson = async (req, res) => {
 
     // Checks that if email has a value, it is in the correct format
     if (req.body.email && !validator.isEmail(req.body.email)) {
-      return res.status(400).json(`Invalid email address`);
+      return res.status(400).json("Invalid email address");
     }
 
-    // Checks email does not already exist in people table
+    // Checks that email value does not already exist in people table
     const peopleList = await knex("people");
     if (peopleList.find((person) => person.email === req.body.email)) {
       return res.status(400).json(`User with email ${req.body.email} already exists`);
@@ -86,13 +86,18 @@ const editPerson = async (req, res) => {
 
     // Checks that if email has a value, it is in the correct format
     if (req.body.email && !validator.isEmail(req.body.email)) {
-      return res.status(400).json(`Invalid email address`);
+      return res.status(400).json("Invalid email address");
     }
 
-    // Checks email does not already exist in people table, except if email has not been changed from original
+    // Checks if person was added with an email originally, updated email cannot be empty
+    if (selectedPerson[0].email && !req.body.email) {
+      return res.status(400).json("Email cannot be left empty")
+    }
+
+    // Checks that email value does not already exist in people table
+    // except if email has not been changed from original
     const peopleList = await knex("people");
-    if (
-      selectedPerson[0].email !== req.body.email &&
+    if (selectedPerson[0].email !== req.body.email &&
       peopleList.find((person) => person.email === req.body.email)
     ){
       return res.status(400).json(`User with email ${req.body.email} already exists`);
