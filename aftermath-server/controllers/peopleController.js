@@ -6,7 +6,7 @@ const knex = initKnex(configuration);
 
 //---------------------------------------------------------------------------------------------
 
-// Get data for all transactions
+// Get data for all people
 const getAllPeople = async (_req, res) => {
   try {
     const peopleList = await knex("people").select("id", "name");
@@ -19,7 +19,7 @@ const getAllPeople = async (_req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-// Get data for a specific transaction
+// Get data for a specific person
 const getPerson = async (req, res) => {
   try {
     const id = req.params.personId;
@@ -37,25 +37,25 @@ const getPerson = async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-// Add an item
+// Add an person
 const addPerson = async (req, res) => {
   try {
     // Checks that name property is defined
     if (!req.body.name) {
       return res.status(400).json("Person must be named");
-    }
+    };
 
     // Checks that if email has a value, it is in the correct format
     if (req.body.email && !validator.isEmail(req.body.email)) {
       return res.status(400).json(`Invalid email address`);
-    }
+    };
 
     // Checks email does not already exist in people table
     const peopleList = await knex("people");
     peopleList.map((person) => {
       if(person.email === req.body.email) {
         return res.status(400).json(`User with email ${req.body.email} already exists`);
-      }
+      };
     });
 
     const updatedPeopleList = await knex("people").insert(req.body);
@@ -70,4 +70,20 @@ const addPerson = async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-export { getAllPeople, getPerson, addPerson };
+// Edit a person
+const editPerson = async (req, res) => {
+  try {
+    const id = req.params.personId;
+
+    await knex("people").where({ id }).update(req.body);
+    const updatedPerson = await knex("people").where({ id }).select();
+
+    res.status(200).json(updatedPerson[0]);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//---------------------------------------------------------------------------------------------
+
+export { getAllPeople, getPerson, addPerson, editPerson };
