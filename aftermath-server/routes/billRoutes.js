@@ -18,7 +18,8 @@ router
 // Items
 router
     .route("/items")
-    .get(itemController.getAllItems);
+    .get(itemController.getAllItems)
+    .post(itemController.addItem);
 
 router
     .route("/items/:itemId")
