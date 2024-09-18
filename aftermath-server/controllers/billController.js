@@ -127,7 +127,12 @@ const saveBill = async (req, res) => {
 // Get data for all bills
 const getAllBills = async (_req, res) => {
   try {
-    const billsList = await knex("bills").select("id", "host_id", "restaurant", "created_at");
+    const billsList = await knex("bills").select(
+      "id",
+      "host_id",
+      "restaurant",
+      "created_at"
+    );
 
     res.status(200).json(billsList);
   } catch (error) {
@@ -137,7 +142,7 @@ const getAllBills = async (_req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-// Get data for specific bill
+// Get bill and item data for a specific bill
 const getBill = async (req, res) => {
   try {
     const id = req.params.billId;
@@ -147,7 +152,13 @@ const getBill = async (req, res) => {
       return res.status(404).json(`Bill with ID ${id} cannot be found`);
     }
 
-    res.status(200).json(selectedBill[0]);
+    const billItems = await knex("items")
+      .where({ bill_id: id })
+      .select("id", "description", "quantity", "total");
+
+    const billDetails = {...selectedBill[0], line_items: billItems};
+
+    res.status(200).json(billDetails);
   } catch (error) {
     console.log(error);
   }
