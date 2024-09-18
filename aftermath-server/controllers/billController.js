@@ -127,19 +127,8 @@ const saveBill = async (req, res) => {
 // Get data for specific bill
 const getBill = async (req, res) => {
   try {
-    const id = req.params.id;
-    const selectedBill = await knex("bills")
-      .where({ id })
-      .select(
-        "id",
-        "host_id",
-        "restaurant",
-        "subtotal",
-        "tax",
-        "tip",
-        "total",
-        "image_url"
-      );
+    const id = req.params.billId;
+    const selectedBill = await knex("bills").where({ id }).select();
 
     if (selectedBill.length === 0) {
       return res.status(404).json(`Bill with ID ${id} cannot be found`);
