@@ -38,7 +38,8 @@ router
 // People
 router
     .route("/people")
-    .get(peopleController.getAllPeople);
+    .get(peopleController.getAllPeople)
+    .post(peopleController.addPerson);
 
 router
     .route("/people/:personId")

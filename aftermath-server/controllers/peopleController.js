@@ -36,4 +36,20 @@ const getPerson = async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-export { getAllPeople, getPerson };
+// Add a person
+const addPerson = async (req, res) => {
+  try {
+
+    const updatedPeopleList = await knex("people").insert(req.body);
+    const newPersonId = updatedPeopleList[0];
+    const newPerson = await knex("people").where({ id: newPersonId }).select()
+
+    res.status(200).json(newPerson);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//---------------------------------------------------------------------------------------------
+
+export { getAllPeople, getPerson, addPerson };
