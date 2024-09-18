@@ -85,7 +85,6 @@ const saveBill = async (req, res) => {
     });
 
     const newBillId = newBill[0];
-    const newBillData = await knex("bills").where({ id: newBillId }).select();
 
     // Add each line item data into items table
     bill.line_items.map(async (line_item) => {
@@ -97,18 +96,32 @@ const saveBill = async (req, res) => {
       });
     });
 
+    // Create response object combining bill and items
+    const newBillData = await knex("bills")
+      .where({ id: newBillId })
+      .select(
+        "bills.id",
+        "bills.host_id",
+        "bills.restaurant",
+        "bills.subtotal",
+        "bills.tax",
+        "bills.tip",
+        "bills.total",
+        "bills.image_url"
+      );
+
     const newItemsData = await knex("items")
-      .join("bills", "items.bill_id", "bills.id")
-      .where({ "bills.id": newBillId })
+      .where({ bill_id: newBillId })
       .select(
         "items.id",
-        "items.bill_id",
         "items.description",
         "items.quantity",
         "items.total"
       );
 
-    res.status(201).json(newBillData[0] && newItemsData);
+    const responseObj = { ...newBillData[0], line_items: newItemsData };
+
+    res.status(201).json(responseObj);
   } catch (error) {
     console.log(error);
   }
