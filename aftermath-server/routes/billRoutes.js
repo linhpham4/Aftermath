@@ -8,7 +8,7 @@ router
     .post(billController.saveBill);
 
 router
-    .route("/bills/:id")
+    .route("/bills/:billId")
     .get(billController.getBill);
 
 export default router;
