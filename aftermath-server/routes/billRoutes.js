@@ -28,7 +28,8 @@ router
 // Transactions
 router
     .route("/transactions")
-    .get(transactionController.getAllTransactions);
+    .get(transactionController.getAllTransactions)
+    .post(transactionController.addTransaction);
 
 router
     .route("/transactions/:transactionId")
