@@ -124,6 +124,19 @@ const saveBill = async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
+// Get data for all bills
+const getAllBills = async (_req, res) => {
+  try {
+    const billsList = await knex("bills").select("id", "host_id", "restaurant", "created_at");
+
+    res.status(200).json(billsList);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//---------------------------------------------------------------------------------------------
+
 // Get data for specific bill
 const getBill = async (req, res) => {
   try {
@@ -142,4 +155,4 @@ const getBill = async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-export { saveBill, getBill };
+export { saveBill, getBill, getAllBills };
