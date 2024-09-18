@@ -60,7 +60,7 @@ const addPerson = async (req, res) => {
     const newPersonId = updatedPeopleList[0];
     const newPerson = await knex("people").where({ id: newPersonId }).select();
 
-    res.status(200).json(newPerson[0]);
+    res.status(201).json(newPerson[0]);
   } catch (error) {
     console.log(error);
   }

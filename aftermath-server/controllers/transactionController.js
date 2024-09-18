@@ -87,7 +87,7 @@ const addTransaction = async (req, res) => {
     const newTransactionId = updatedTransactionsList[0];
     const newTransaction = await knex("transactions").where({ id: newTransactionId }).select();
 
-    res.status(200).json(newTransaction[0]);
+    res.status(201).json(newTransaction[0]);
   } catch (error) {
     console.log(error);
   }
