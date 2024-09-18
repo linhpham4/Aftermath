@@ -43,6 +43,26 @@ const getItem = async (req, res) => {
 // Add an item
 const addItem = async (req, res) => {
   try {
+    // Checks that request boday contains all required data
+    if (
+      !req.body.bill_id ||
+      !req.body.description ||
+      !req.body.quantity ||
+      !req.body.total
+    ) {
+      return res.status(400).json("Please provide all required item information");
+    }
+
+    // Checks that a bill in the bills table has an id matching bill_id from the request
+    const bills = await knex("bills");
+    if (!bills.find((bill) => bill.id === req.body.bill_id)) {
+      return res.status(400).json(`Bill with ID ${req.body.bill_id} not found`);
+    }
+
+    // Checks if the value of quantity and total is a number
+    if (typeof req.body.quantity !== "number" || typeof req.body.total !== "number") {
+      return res.status(400).json("Quantity and total must be a number");
+    }
 
     const updatedItemsList = await knex("items").insert(req.body);
     const newItemId = updatedItemsList[0];
