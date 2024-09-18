@@ -112,12 +112,7 @@ const saveBill = async (req, res) => {
 
     const newItemsData = await knex("items")
       .where({ bill_id: newBillId })
-      .select(
-        "items.id",
-        "items.description",
-        "items.quantity",
-        "items.total"
-      );
+      .select("items.id", "items.description", "items.quantity", "items.total");
 
     const responseObj = { ...newBillData[0], line_items: newItemsData };
 
@@ -129,4 +124,33 @@ const saveBill = async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-export { saveBill };
+// Get data for specific bill
+const getBill = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const selectedBill = await knex("bills")
+      .where({ id })
+      .select(
+        "id",
+        "host_id",
+        "restaurant",
+        "subtotal",
+        "tax",
+        "tip",
+        "total",
+        "image_url"
+      );
+
+    if (selectedBill.length === 0) {
+      return res.status(404).json(`Bill with ID ${id} cannot be found`);
+    }
+
+    res.status(200).json(selectedBill[0]);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//---------------------------------------------------------------------------------------------
+
+export { saveBill, getBill };
