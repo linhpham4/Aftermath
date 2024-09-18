@@ -5,6 +5,6 @@ const router = express.Router();
 
 router
     .route("/bills")
-    .post(billController.convertBill);
+    .post(billController.saveBill);
 
 export default router;
