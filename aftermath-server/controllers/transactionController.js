@@ -51,25 +51,26 @@ const addTransaction = async (req, res) => {
       !req.body.item_id ||
       !req.body.payment_to_id ||
       !req.body.payment_from_id ||
-      !req.body.total ||
+      req.body.total === undefined ||
       !req.body.settled
     ) {
       return res.status(400).json("Please provide all required transaction information");
     }
 
     // Checks that item with id matching bill_id from the request exists
-    const items = await knex("items");
-    if (!items.find((item) => item.id === req.body.item_id)) {
+    const foundItem = await knex("items").where("id", req.body.item_id);
+    if (foundItem.length === 0) {
       return res.status(400).json(`Item with ID ${req.body.item_id} not found`);
-    }
+    };
 
     // Checks that people with id matching payment_to_id and payment_from_id from the request exists
-    const people = await knex("people");
-    if (!people.find((person) => person.id === req.body.payment_to_id)) {
+    const foundPayer = await knex("people").where("id", req.body.payment_to_id)
+    if (foundPayer.length === 0) {
       return res.status(400).json(`Person with ID ${req.body.payment_to_id} not found`);
     }
 
-    if (!people.find((person) => person.id === req.body.payment_from_id)) {
+    const foundPaidFor = await knex("people").where("id", req.body.payment_from_id)
+    if (foundPaidFor.length === 0) {
       return res.status(400).json(`Person with ID ${req.body.payment_from_id} not found`);
     }
 
@@ -77,6 +78,11 @@ const addTransaction = async (req, res) => {
     if (typeof req.body.total !== "number") {
       return res.status(400).json("Total must be a number");
     }
+
+    // Checks that the value of total is not zero
+    if (req.body.total === 0) {
+      return res.status(400).json("Total cannot be zero for an existing item");
+    };
 
     // Checks if the value of settled is a boolean
     if (typeof req.body.settled !== "boolean") {
