@@ -14,7 +14,8 @@ router
 router
     .route("/bills/:billId")
     .get(billController.getBill)
-    .put(billController.editBill);
+    .put(billController.editBill)
+    .delete(billController.removeBill);
 
 // Items
 router

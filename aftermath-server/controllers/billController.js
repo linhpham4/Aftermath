@@ -226,4 +226,24 @@ const editBill = async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-export { saveBill, getBill, getAllBills, editBill };
+// Delete a bill
+const removeBill = async (req, res) => {
+  try {
+    const id = req.params.billId;
+    const selectedBill = await knex("bills").where({ id }).select();
+
+    if (selectedBill.length === 0) {
+      return res.status(404).json(`Bill with ID ${id} cannot be found`);
+    }
+
+    await knex("bills").where({ id }).del();
+
+    res.status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+  
+  //---------------------------------------------------------------------------------------------
+
+export { saveBill, getBill, getAllBills, editBill, removeBill };
