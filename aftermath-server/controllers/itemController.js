@@ -134,4 +134,24 @@ const editItem = async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-export { getAllItems, getItem, addItem, editItem };
+// Delete an item
+const removeItem = async (req, res) => {
+  try {
+    const id = req.params.itemId;
+    const selectedItem = await knex("items").where({ id }).select();
+
+    if (selectedItem.length === 0) {
+      return res.status(404).json(`Item with ID ${id} cannot be found`);
+    }
+
+    await knex("items").where({ id }).del();
+    
+    res.status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//---------------------------------------------------------------------------------------------
+
+export { getAllItems, getItem, addItem, editItem, removeItem };

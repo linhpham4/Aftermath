@@ -25,7 +25,8 @@ router
 router
     .route("/items/:itemId")
     .get(itemController.getItem)
-    .put(itemController.editItem);
+    .put(itemController.editItem)
+    .delete(itemController.removeItem);
 
 // Transactions
 router
