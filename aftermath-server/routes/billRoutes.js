@@ -33,7 +33,8 @@ router
 
 router
     .route("/transactions/:transactionId")
-    .get(transactionController.getTransaction);
+    .get(transactionController.getTransaction)
+    .put(transactionController.editTransaction);
 
 
 // People
