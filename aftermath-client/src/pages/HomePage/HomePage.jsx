@@ -1,22 +1,24 @@
 import "./HomePage.scss";
 import logo from "../../assets/logo/aftermath_logo.svg";
 import axios from "axios";
+import { useState } from "react";
 
 const HomePage = () => {
 
   const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+  const [image, setImage] = useState(null);
 
-  const handleSubmit = (event) => {
+  // Set state variable as image file upload
+  const handleInput = (event) => {
+    const formData = new FormData();
+    formData.append('bill', event.target.files[0]);
+    setImage(formData);
+  };
+
+  // POST request to send image to server public/images folder
+  const handleSubmit = async(event) => {
     event.preventDefault();
-    console.log("yay :)")
-
-    const postBill = async () => {
-      await axios.post(`${BASE_URL}/bills`, {
-        value: "test",
-      });
-    };
-
-    postBill();
+    await axios.post(`${BASE_URL}/bills`, image);
   };
 
   return (
@@ -38,6 +40,7 @@ const HomePage = () => {
           id="bill"
           method="post"
           encType="multipart/form-data"
+          onSubmit={handleSubmit}
         >
           <label className="home__label" htmlFor="bill">
             Upload a picture of your bill to get started!
@@ -48,11 +51,12 @@ const HomePage = () => {
             id="bill"
             name="bill"
             accept="image/*"
+            onChange={handleInput}
           ></input>
         </form>
       </div>
 
-      <button className="home__button" form="bill" onClick={handleSubmit}>
+      <button className="home__button" form="bill" type="submit">
         Next
       </button>
     </main>
