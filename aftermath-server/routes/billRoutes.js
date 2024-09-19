@@ -23,7 +23,8 @@ router
 
 router
     .route("/items/:itemId")
-    .get(itemController.getItem);
+    .get(itemController.getItem)
+    .put(itemController.editItem);
 
 // Transactions
 router
