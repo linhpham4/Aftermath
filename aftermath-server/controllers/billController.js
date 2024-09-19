@@ -156,7 +156,7 @@ const getBill = async (req, res) => {
       .where({ bill_id: id })
       .select("id", "description", "quantity", "total");
 
-    const billDetails = {...selectedBill[0], line_items: billItems};
+    const billDetails = { ...selectedBill[0], line_items: billItems };
 
     res.status(200).json(billDetails);
   } catch (error) {
@@ -166,4 +166,64 @@ const getBill = async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-export { saveBill, getBill, getAllBills };
+// Edit a bill
+const editBill = async (req, res) => {
+  try {
+    const id = req.params.billId;
+
+    // Checks that bill with id matching billId exists
+    const selectedBill = await knex("bills").where({ id }).select();
+    if (selectedBill.length === 0) {
+      return res.status(404).json(`Bill with ID ${id} cannot be found`);
+    }
+
+    // Checks that request boday contains all required data
+    if (
+      !req.body.host_id ||
+      req.body.subtotal === undefined ||
+      req.body.tax === undefined ||
+      req.body.tip === undefined ||
+      req.body.total === undefined ||
+      !req.body.image_url
+    ) {
+      return res.status(400).json("Please provide all required item information");
+    }
+
+    // Checks that a person in the people table has an id matching host_id from the request
+    const foundPerson = await knex("people").where("id", req.body.host_id);
+    if (foundPerson.length === 0) {
+      return res.status(400).json(`Person with ID ${req.body.host_id} not found`);
+    }
+
+    // Checks if the value of subtotal, tax, tip(if any), and total is a number
+    if (
+      typeof req.body.subtotal !== "number" ||
+      typeof req.body.tax !== "number" ||
+      (req.body.tip !== undefined && typeof req.body.tip !== "number") ||
+      typeof req.body.total !== "number"
+    ) {
+      return res.status(400).json("Subtotal, tax, tip (if any), and total must be a number");
+    }
+
+    // Checks that the value of subtotal and total is not zero
+    if (req.body.subtotal === 0 || req.body.tax === 0 || req.body.total === 0) {
+      return res.status(400).json("Subtotal, tax, and total cannot be zero for an existing bill");
+    }
+
+    // Checks that host_id has not been changed
+    if (selectedBill[0].host_id !== req.body.host_id) {
+      return res.status(400).json("Host cannot be changed for an existing bill");
+    }
+
+    await knex("bills").where({ id }).update(req.body);
+    const updatedBill = await knex("bills").where({ id }).select();
+
+    res.status(200).json(updatedBill[0]);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//---------------------------------------------------------------------------------------------
+
+export { saveBill, getBill, getAllBills, editBill };
