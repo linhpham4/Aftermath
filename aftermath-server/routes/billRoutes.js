@@ -36,7 +36,8 @@ router
 router
     .route("/transactions/:transactionId")
     .get(transactionController.getTransaction)
-    .put(transactionController.editTransaction);
+    .put(transactionController.editTransaction)
+    .delete(transactionController.removeTransaction);
 
 
 // People

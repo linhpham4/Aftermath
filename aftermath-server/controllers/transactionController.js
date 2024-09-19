@@ -170,4 +170,24 @@ const editTransaction = async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-export { getAllTransactions, getTransaction, addTransaction, editTransaction };
+// Delete a transaction
+const removeTransaction = async (req, res) => {
+  try {
+    const id = req.params.transactionId;
+    const selectedTransaction = await knex("transactions").where({ id }).select();
+
+    if (selectedTransaction.length === 0) {
+      return res.status(404).json(`Transaction with ID ${id} cannot be found`);
+    }
+
+    await knex("transactions").where({ id }).del();
+    
+    res.status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//---------------------------------------------------------------------------------------------
+
+export { getAllTransactions, getTransaction, addTransaction, editTransaction, removeTransaction };
