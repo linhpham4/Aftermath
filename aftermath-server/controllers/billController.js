@@ -3,8 +3,12 @@ import configuration from "../knexfile.js";
 import axios from "axios";
 import FormData from "form-data";
 import fs from "fs";
+import express from "express";
+import multer from "multer";
 
 const knex = initKnex(configuration);
+const app = express();
+const upload = multer({ dest: "uploads/"});
 
 const BASE_URL = "https://api.veryfi.com/api/v8/partner/documents";
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -48,75 +52,76 @@ const convertBill = async (imageUrl) => {
 // Call convertBill and save the response to database
 const saveBill = async (req, res) => {
   try {
-    const imageUrl = req.body.url;
-    const bill = await convertBill(imageUrl);
+    console.log("upload received :)", req.body)
+  //   const imageUrl = req.body.url;
+  //   const bill = await convertBill(imageUrl);
 
-    // If there are any properties that are null, set the value to 0 instead
-    for (const property in bill) {
-      if (bill[property] === null) {
-        bill[property] = 0;
-      }
-    }
+  //   // If there are any properties that are null, set the value to 0 instead
+  //   for (const property in bill) {
+  //     if (bill[property] === null) {
+  //       bill[property] = 0;
+  //     }
+  //   }
 
-    // Same check for line_items
-    for (const line_item of bill.line_items) {
-      for (const property in line_item) {
-        if (line_item[property] === null) {
-          line_item[property] = 0;
-        }
-      }
-    }
+  //   // Same check for line_items
+  //   for (const line_item of bill.line_items) {
+  //     for (const property in line_item) {
+  //       if (line_item[property] === null) {
+  //         line_item[property] = 0;
+  //       }
+  //     }
+  //   }
 
-    /* 
-      ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-      │ host_id will change dynamically later when there are multiple users                                                         │
-      └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-     */
+  //   /* 
+  //     ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  //     │ host_id will change dynamically later when there are multiple users                                                         │
+  //     └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+  //    */
 
-    // Add the necessary data from Veryfi API response to bills table
-    const newBill = await knex("bills").insert({
-      host_id: 1,
-      restaurant: bill.vendor.name,
-      subtotal: bill.subtotal,
-      tax: bill.tax,
-      tip: bill.tip,
-      total: bill.total,
-      image_url: bill.img_url,
-    });
+  //   // Add the necessary data from Veryfi API response to bills table
+  //   const newBill = await knex("bills").insert({
+  //     host_id: 1,
+  //     restaurant: bill.vendor.name,
+  //     subtotal: bill.subtotal,
+  //     tax: bill.tax,
+  //     tip: bill.tip,
+  //     total: bill.total,
+  //     image_url: bill.img_url,
+  //   });
 
-    const newBillId = newBill[0];
+  //   const newBillId = newBill[0];
 
-    // Add each line item data into items table
-    bill.line_items.map(async (line_item) => {
-      await knex("items").insert({
-        bill_id: newBillId,
-        description: line_item.description,
-        quantity: line_item.quantity,
-        total: line_item.total,
-      });
-    });
+  //   // Add each line item data into items table
+  //   bill.line_items.map(async (line_item) => {
+  //     await knex("items").insert({
+  //       bill_id: newBillId,
+  //       description: line_item.description,
+  //       quantity: line_item.quantity,
+  //       total: line_item.total,
+  //     });
+  //   });
 
-    // Create response object combining bill and items
-    const newBillData = await knex("bills")
-      .where({ id: newBillId })
-      .select(
-        "bills.id",
-        "bills.host_id",
-        "bills.restaurant",
-        "bills.subtotal",
-        "bills.tax",
-        "bills.tip",
-        "bills.total",
-        "bills.image_url"
-      );
+  //   // Create response object combining bill and items
+  //   const newBillData = await knex("bills")
+  //     .where({ id: newBillId })
+  //     .select(
+  //       "bills.id",
+  //       "bills.host_id",
+  //       "bills.restaurant",
+  //       "bills.subtotal",
+  //       "bills.tax",
+  //       "bills.tip",
+  //       "bills.total",
+  //       "bills.image_url"
+  //     );
 
-    const newItemsData = await knex("items")
-      .where({ bill_id: newBillId })
-      .select("items.id", "items.description", "items.quantity", "items.total");
+  //   const newItemsData = await knex("items")
+  //     .where({ bill_id: newBillId })
+  //     .select("items.id", "items.description", "items.quantity", "items.total");
 
-    const responseObj = { ...newBillData[0], line_items: newItemsData };
+  //   const responseObj = { ...newBillData[0], line_items: newItemsData };
 
-    res.status(201).json(responseObj);
+  //   res.status(201).json(responseObj);
   } catch (error) {
     console.log(error);
   }

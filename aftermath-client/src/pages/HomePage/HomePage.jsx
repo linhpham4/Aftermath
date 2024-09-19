@@ -1,7 +1,24 @@
 import "./HomePage.scss";
 import logo from "../../assets/logo/aftermath_logo.svg";
+import axios from "axios";
 
 const HomePage = () => {
+
+  const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log("yay :)")
+
+    const postBill = async () => {
+      await axios.post(`${BASE_URL}/bills`, {
+        value: "test",
+      });
+    };
+
+    postBill();
+  };
+
   return (
     <main className="home">
       <div className="home__container">
@@ -35,7 +52,7 @@ const HomePage = () => {
         </form>
       </div>
 
-      <button className="home__button" form="bill">
+      <button className="home__button" form="bill" onClick={handleSubmit}>
         Next
       </button>
     </main>
