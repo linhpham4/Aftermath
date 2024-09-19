@@ -48,6 +48,7 @@ router
 router
     .route("/people/:personId")
     .get(peopleController.getPerson)
-    .put(peopleController.editPerson);
+    .put(peopleController.editPerson)
+    .delete(peopleController.removePerson);
 
 export default router;

@@ -114,4 +114,24 @@ const editPerson = async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-export { getAllPeople, getPerson, addPerson, editPerson };
+// Delete a person
+const removePerson = async (req, res) => {
+  try {
+    const id = req.params.personId;
+    const selectedPerson = await knex("people").where({ id }).select();
+
+    if (selectedPerson.length === 0) {
+      return res.status(404).json(`Person with ID ${id} cannot be found`);
+    }
+
+    await knex("people").where({ id }).del();
+
+    res.status(204).end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//---------------------------------------------------------------------------------------------
+
+export { getAllPeople, getPerson, addPerson, editPerson, removePerson };
