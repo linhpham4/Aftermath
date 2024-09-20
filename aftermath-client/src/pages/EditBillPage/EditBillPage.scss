@@ -48,8 +48,8 @@
   }
 
   &__avatar {
-    width: 2.5rem;
-    height: 2.5rem;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
     background-color: cornflowerblue;
     border-radius: 50%;
   }
@@ -124,6 +124,7 @@
   &__people-container {
     width: 100%;
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
 

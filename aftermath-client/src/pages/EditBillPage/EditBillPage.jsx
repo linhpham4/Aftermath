@@ -1,14 +1,27 @@
 import "./EditBillPage.scss";
+import { useState } from "react";
 
 const EditBillPage = () => {
+  const [people, setPeople] = useState([""]);
+  const [itemPeople, setItemPeople] = useState([]);
+
+  const addPerson = (event) => {
+    event.preventDefault();
+    setPeople([...people, ""]);
+  };
+
+  const addItemPerson = (event) => {
+    event.preventDefault();
+    setItemPeople([...itemPeople, ""]);
+  };
 
   return (
     <main className="edit">
       <div className="edit__header">
-        <button className="edit__add"></button>
-        <div className="edit__avatar"></div>
-        <div className="edit__avatar"></div>
-        <div className="edit__avatar"></div>
+        <button className="edit__add" onClick={addPerson}></button>
+        {people.map((person) => {
+          return <div className="edit__avatar"></div>
+        })}
       </div>
 
       <form className="edit__form" id="editBill">
@@ -39,41 +52,43 @@ const EditBillPage = () => {
           </div>
 
           <div className="edit__people-container">
-            <button className="edit__add edit__add--item"></button>
-            <div className="edit__avatar"></div>
+            <button className="edit__add edit__add--item" onClick={addItemPerson}></button>
+            {itemPeople.map((person) => {
+              return <div className="edit__avatar"></div>
+            })}
           </div>
         </div>
 
         <div className="edit__item edit__item--end">
-          <label className="edit__text">
+          <p className="edit__text">
             Subtotal
             <br />
             Tax
             <br />
             Tip
             <br />
-          </label>
+          </p>
           <div className="edit__input-container edit__input-container--column">
             <p className="edit__text edit__text--gray">$47</p>
             <input
               className="edit__input"
               type="text"
-              id="subtotal"
-              name="subtotal"
+              id="tax"
+              name="tax"
               value="$20.21"
             />
             <input
               className="edit__input"
               type="text"
-              id="subtotal"
-              name="subtotal"
+              id="tip"
+              name="tip"
               value="$20.21"
             />
           </div>
         </div>
 
         <div className="edit__item edit__item--end">
-          <label className="edit__text">Total</label>
+          <p className="edit__text">Total</p>
           <p className="edit__text edit__text--gray">$473</p>
         </div>
       </form>
