@@ -25,6 +25,11 @@
     margin-bottom: 2rem;
     box-shadow: 10px 10px $blue;
     overflow: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { 
+      display: none;
+    }
   }
 
   &__logo {
