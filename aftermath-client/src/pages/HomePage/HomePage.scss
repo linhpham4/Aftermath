@@ -26,7 +26,7 @@
     overflow: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
-    &::-webkit-scrollbar { 
+    &::-webkit-scrollbar {
       display: none;
     }
   }
@@ -64,30 +64,8 @@
   }
 
   &__button {
-    width: 40%;
     max-width: 20rem;
-    display: flex;
-    justify-content: center;
-    background-color: $red;
-    color: $yellow;
     font-weight: 600;
-    padding: 0.5rem 2rem;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 15px $blue;
-    transition: 0.2s;
-    @include medium;
-
-    &:hover {
-      cursor: pointer;
-      margin-top: 5px;
-      box-shadow: 0 12px $blue;
-    }
-
-    &:active {
-      cursor: pointer;
-      margin-top: 15px;
-      box-shadow: 0 5px $blue;
-    }
+    @include button;
   }
 }
