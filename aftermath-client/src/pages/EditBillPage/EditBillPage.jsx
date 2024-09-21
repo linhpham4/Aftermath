@@ -42,13 +42,27 @@ const EditBillPage = () => {
   // Update state variable for changes made in bill input fields
   const handleBill = (event) => {
     const name = event.target.name;
-    const value = event.target.value;
+    // Limits decimal places to 2
+    let value = parseFloat(event.target.value).toFixed(2);
 
     setBill((prevState) => ({
       ...prevState,
       [name]: Number(value),
     }));
   };
+
+
+  // Update bill total when subtotal, tax, or tip changes
+  const updateTotal = () => {
+    setBill((prevState) => ({
+      ...prevState,
+      total: Number(prevState.subtotal + prevState.tax + prevState.tip).toFixed(2)
+    }))
+  }
+
+  useEffect(() => {
+    updateTotal();
+  }, [bill.subtotal, bill.tax, bill.tip])
 
   // When new person is created, they get added to the people state variable
   useEffect(() => {
