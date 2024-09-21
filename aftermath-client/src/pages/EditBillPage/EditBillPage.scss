@@ -129,6 +129,10 @@
     &--total {
       width: 20%;
     }
+    &--gray {
+      text-align: right;
+      color: rgb(151, 154, 196);
+    }
     &:focus {
       outline: none;
     }
@@ -139,13 +143,5 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-  }
-
-  &__text {
-    @include small;
-    &--gray {
-      text-align: right;
-      color: rgb(151, 154, 196);
-    }
   }
 }

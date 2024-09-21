@@ -8,7 +8,7 @@ import EditPersonNameModal from "../../components/EditPersonNameModal/EditPerson
 const EditBillPage = () => {
   const [open, setOpen] = useState(false);
   const [bill, setBill] = useState({
-    restaurant: "Untitled Restaurant",
+    restaurant: "",
     subtotal: 0,
     tax: 0,
     tip: 0,
@@ -46,7 +46,7 @@ const EditBillPage = () => {
 
     setBill((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: Number(value),
     }));
   };
 
@@ -141,10 +141,18 @@ const EditBillPage = () => {
             <br />
           </p>
           <form className="edit__input-container edit__input-container--column">
-            <p className="edit__text edit__text--gray">{bill.subtotal}</p>
+            <input 
+              className="edit__input edit__input--gray"
+              type="number"
+              id="subtotal"
+              name="subtotal"
+              value={bill.subtotal}
+              onChange={handleBill} 
+              disabled="disabled"
+            />
             <input
               className="edit__input"
-              type="text"
+              type="number"
               id="tax"
               name="tax"
               value={bill.tax}
@@ -152,7 +160,7 @@ const EditBillPage = () => {
             />
             <input
               className="edit__input"
-              type="text"
+              type="number"
               id="tip"
               name="tip"
               value={bill.tip}
@@ -163,7 +171,15 @@ const EditBillPage = () => {
 
         <div className="edit__item edit__item--end">
           <p className="edit__text">Total</p>
-          <p className="edit__text edit__text--gray">{bill.total}</p>
+          <input 
+              className="edit__input edit__input--gray"
+              type="number"
+              id="total"
+              name="total"
+              value={bill.total}
+              onChange={handleBill} 
+              disabled="disabled"
+            />
         </div>
       </form>
 
