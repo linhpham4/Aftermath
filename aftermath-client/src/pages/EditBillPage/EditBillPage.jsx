@@ -1,12 +1,21 @@
 import "./EditBillPage.scss";
 import avatar from "../../assets/icons/avatar.svg";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import EditPersonNameModal from "../../components/EditPersonNameModal/EditPersonNameModal";
 
 const EditBillPage = () => {
   const [open, setOpen] = useState(false);
+  const [bill, setBill] = useState({
+    restaurant: "Untitled Restaurant",
+    subtotal: 0,
+    tax: 0,
+    tip: 0,
+    total: 0,
+    image_url: ""
+  });
+  const [item, setItem] = useState([]);
   const [name, setName] = useState("");
   const [personId, setPersonId] = useState(null);
   const [color, setColor] = useState(null);
@@ -14,6 +23,32 @@ const EditBillPage = () => {
   const [itemPeople, setItemPeople] = useState([]);
 
   const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+  const { id } = useParams();
+
+  //Get data for bill matching {id}
+  const getBill = async() => {
+    try {
+      const response = await axios.get(`${BASE_URL}/bills/${id}`);
+      setBill(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getBill();
+  }, [id]);
+
+  // Update state variable for changes made in bill input fields
+  const handleBill = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setBill((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   // When new person is created, they get added to the people state variable
   useEffect(() => {
@@ -33,6 +68,10 @@ const EditBillPage = () => {
     event.preventDefault();
     setItemPeople([...itemPeople, ""]);
   };
+
+  if (!bill) {
+    return <h1>Loading...</h1>
+  }
 
   return (
     <main className="edit">
@@ -101,28 +140,30 @@ const EditBillPage = () => {
             Tip
             <br />
           </p>
-          <div className="edit__input-container edit__input-container--column">
-            <p className="edit__text edit__text--gray">$47</p>
+          <form className="edit__input-container edit__input-container--column">
+            <p className="edit__text edit__text--gray">{bill.subtotal}</p>
             <input
               className="edit__input"
               type="text"
               id="tax"
               name="tax"
-              value="$20.21"
+              value={bill.tax}
+              onChange={handleBill}
             />
             <input
               className="edit__input"
               type="text"
               id="tip"
               name="tip"
-              value="$20.21"
+              value={bill.tip}
+              onChange={handleBill}
             />
-          </div>
+          </form>
         </div>
 
         <div className="edit__item edit__item--end">
           <p className="edit__text">Total</p>
-          <p className="edit__text edit__text--gray">$473</p>
+          <p className="edit__text edit__text--gray">{bill.total}</p>
         </div>
       </form>
 
