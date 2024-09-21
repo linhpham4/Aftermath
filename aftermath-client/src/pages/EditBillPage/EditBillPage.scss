@@ -144,10 +144,18 @@
     flex-wrap: wrap;
     gap: 0.5rem;
   }
+
+  &__text {
+    @include small;
+    &--gray {
+      text-align: right;
+      color: rgb(151, 154, 196);
+    }
+  }
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
