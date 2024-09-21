@@ -39,14 +39,18 @@ const EditBillPage = () => {
       <div className="edit__header">
         <button className="edit__add" onClick={() => setOpen(true)}></button>
         {/* Dynamically render an avatar for each person with a different color */}
+        {/* ******** Still need to generate individual prices Dynamically********************** */}
         {people.map((person) => (
-          <img
-            className="edit__avatar"
-            src={avatar}
-            alt="avatar"
-            style={{ filter: `hue-rotate(${person.color}deg)` }}
-            key={person.id}
-          />
+          <div className="edit__person" key={person.id}>
+            <p className="edit__person-total">$0.00</p>
+            <img
+              className="edit__avatar"
+              src={avatar}
+              alt="avatar"
+              style={{ filter: `hue-rotate(${person.color}deg)` }}
+            />
+            <p className="edit__name">{person.name}</p>
+          </div>
         ))}
       </div>
 

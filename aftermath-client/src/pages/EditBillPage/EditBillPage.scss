@@ -12,9 +12,13 @@
   &__header {
     width: 100%;
     display: flex;
+    align-items: center;
+    justify-content: flex-start;
     background-color: $red;
     padding: 1rem;
     gap: 1rem;
+    position: fixed;
+    z-index: 1;
     overflow: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -47,6 +51,23 @@
     }
   }
 
+  &__person {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  &__person-total {
+    color: $yellow;
+    @include small;
+  }
+
+  &__name {
+    color: $yellow;
+    @include small;
+  }
+
   &__avatar {
     min-width: 2.5rem;
     min-height: 2.5rem;
@@ -61,14 +82,8 @@
     align-items: center;
     justify-content: flex-start;
     background-color: $yellow;
-    margin-top: 1.5rem;
+    margin-top: 10rem;
     box-shadow: 10px 10px $blue;
-    overflow: scroll;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    &::-webkit-scrollbar {
-      display: none;
-    }
   }
 
   &__item {
