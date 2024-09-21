@@ -33,18 +33,22 @@ const EditPersonNameModal = ({ open, close, setName, setPersonId, setColor }) =>
 
   // Post request to add new person to database
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (text === "") {
-      return setShowError(true);
+    try {
+      event.preventDefault();
+      if (text === "") {
+        return setShowError(true);
+      }
+  
+      const response = await axios.post(`${BASE_URL}/people`, {name: text});
+  
+      // Set state variables to the new person pass back to parent
+      setPersonId(response.data.id);
+      setName(text);
+      pickColor();
+      close();
+    } catch (error) {
+      console.log(error);
     }
-
-    const response = await axios.post(`${BASE_URL}/people`, {name: text});
-
-    // Set state variables to the new person pass back to parent
-    setPersonId(response.data.id);
-    setName(text);
-    pickColor();
-    close();
   };
 
   if (!open) return null;
