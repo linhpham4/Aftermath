@@ -1,14 +1,12 @@
 import "./EditBillPage.scss";
+import avatar from "../../assets/icons/avatar.svg";
 import { useState } from "react";
+import EditPersonNameModal from "../../components/EditPersonNameModal/EditPersonNameModal";
 
 const EditBillPage = () => {
+  const [open, setOpen] = useState(false);
   const [people, setPeople] = useState([""]);
   const [itemPeople, setItemPeople] = useState([]);
-
-  const addPerson = (event) => {
-    event.preventDefault();
-    setPeople([...people, ""]);
-  };
 
   const addItemPerson = (event) => {
     event.preventDefault();
@@ -18,10 +16,8 @@ const EditBillPage = () => {
   return (
     <main className="edit">
       <div className="edit__header">
-        <button className="edit__add" onClick={addPerson}></button>
-        {people.map((person) => {
-          return <div className="edit__avatar"></div>
-        })}
+        <button className="edit__add" onClick={() => setOpen(true)}></button>
+        <img className="edit__avatar" src={avatar} alt="avatar" />
       </div>
 
       <form className="edit__form" id="editBill">
@@ -92,6 +88,8 @@ const EditBillPage = () => {
           <p className="edit__text edit__text--gray">$473</p>
         </div>
       </form>
+
+      <EditPersonNameModal open={open} close={() => setOpen(false)}/>
     </main>
   );
 };
