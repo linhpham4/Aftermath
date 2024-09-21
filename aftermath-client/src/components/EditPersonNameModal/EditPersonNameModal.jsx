@@ -1,8 +1,7 @@
 import "./EditPersonNameModal.scss";
-import close from "../../assets/icons/close.svg";
 import { useState } from "react";
 
-const EditPersonNameModal = () => {
+const EditPersonNameModal = ({ open, close }) => {
   const [name, setName] = useState("");
   const [showError, setShowError] = useState("");
 
@@ -21,10 +20,12 @@ const EditPersonNameModal = () => {
     }
   };
 
+  if (!open) return null;
+
   return (
     <div className="editPerson">
       <div className="editPerson__container">
-        <img className="editPerson__close" src={close} alt="close icon" />
+        <button className="editPerson__close" onClick={close}></button>
 
         <form
           className="editPerson__form"

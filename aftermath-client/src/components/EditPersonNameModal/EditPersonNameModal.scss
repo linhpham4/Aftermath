@@ -25,12 +25,17 @@
   }
 
   &__close {
-    width: 35px;
-    height: 35px;
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
     transition: 0.2s;
+    &::before {
+      content: url("../../assets/icons/close.svg");
+      transform: scale(1.5);
+      display: inline-block;
+    }
     &:hover {
       cursor: pointer;
-      transform: scale(1.2);
+      transform: scale(1.1);
     }
   }
 
