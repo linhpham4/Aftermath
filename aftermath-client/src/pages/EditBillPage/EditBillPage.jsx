@@ -1,15 +1,33 @@
 import "./EditBillPage.scss";
 import avatar from "../../assets/icons/avatar.svg";
 import { useState } from "react";
+import { useEffect } from "react";
+import axios from "axios";
 import EditPersonNameModal from "../../components/EditPersonNameModal/EditPersonNameModal";
 
 const EditBillPage = () => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
-  const [personId, setPersonId] = useState(0);
-  const [people, setPeople] = useState([]);
+  const [personId, setPersonId] = useState(null);
+  const [color, setColor] = useState(null);
+  const [people, setPeople] = useState([{ id: 1, name: "You", color: 0 }]);
   const [itemPeople, setItemPeople] = useState([]);
 
+  const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+
+  // When new person is created, they get added to the people state variable
+  useEffect(() => {
+    if (personId !== null) {
+
+      const newPerson = {
+        id: personId,
+        name: name,
+        color: color
+      };
+
+      setPeople([...people, newPerson]);
+    }
+  }, [personId]);
 
   const addItemPerson = (event) => {
     event.preventDefault();
@@ -20,11 +38,16 @@ const EditBillPage = () => {
     <main className="edit">
       <div className="edit__header">
         <button className="edit__add" onClick={() => setOpen(true)}></button>
-        <img
-          className="edit__avatar"
-          src={avatar}
-          alt="avatar"
-        />
+        {/* Dynamically render an avatar for each person with a different color */}
+        {people.map((person) => (
+          <img
+            className="edit__avatar"
+            src={avatar}
+            alt="avatar"
+            style={{ filter: `hue-rotate(${person.color}deg)` }}
+            key={person.id}
+          />
+        ))}
       </div>
 
       <form className="edit__form" id="editBill">
@@ -104,6 +127,7 @@ const EditBillPage = () => {
         close={() => setOpen(false)}
         setName={setName}
         setPersonId={setPersonId}
+        setColor={setColor}
       />
     </main>
   );

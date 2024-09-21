@@ -2,7 +2,7 @@ import "./EditPersonNameModal.scss";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const EditPersonNameModal = ({ open, close, setName, setPersonId }) => {
+const EditPersonNameModal = ({ open, close, setName, setPersonId, setColor }) => {
   const [text, setText] = useState("");
   const [showError, setShowError] = useState("");
   const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
@@ -11,14 +11,20 @@ const EditPersonNameModal = ({ open, close, setName, setPersonId }) => {
   useEffect(() => {
     setText("");
   }, [open]);
+  
+  // Picks a random number (degree) for color filter for each new avatar
+  useEffect(() => {
+    const degree = Math.floor(Math.random() * 360);
+    setColor(degree);
+  },[]);
 
+  // Retrieve name from input, must be filled out
   const handleChange = (event) => {
     if (event.target.value !== "") {
       setShowError("");
     }
     setText(event.target.value);
   };
-
 
   // Post request to add new person to database
   const handleSubmit = async (event) => {
@@ -58,7 +64,9 @@ const EditPersonNameModal = ({ open, close, setName, setPersonId }) => {
             value={text}
             onChange={handleChange}
           />
+          
           { showError && <p className="editPerson__error">Person must be named</p> }
+
           <button className="editPerson__button" form="editPersonName">
             Add
           </button>
