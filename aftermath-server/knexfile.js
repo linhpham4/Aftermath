@@ -8,5 +8,6 @@ export default {
     user: process.env.DB_LOCAL_USER,
     password: process.env.DB_LOCAL_PASSWORD,
     charset: "utf8",
+    decimalNumbers: true
   },
 };
