@@ -5,8 +5,11 @@ import EditPersonNameModal from "../../components/EditPersonNameModal/EditPerson
 
 const EditBillPage = () => {
   const [open, setOpen] = useState(false);
-  const [people, setPeople] = useState([""]);
+  const [name, setName] = useState("");
+  const [personId, setPersonId] = useState(0);
+  const [people, setPeople] = useState([]);
   const [itemPeople, setItemPeople] = useState([]);
+
 
   const addItemPerson = (event) => {
     event.preventDefault();
@@ -17,7 +20,11 @@ const EditBillPage = () => {
     <main className="edit">
       <div className="edit__header">
         <button className="edit__add" onClick={() => setOpen(true)}></button>
-        <img className="edit__avatar" src={avatar} alt="avatar" />
+        <img
+          className="edit__avatar"
+          src={avatar}
+          alt="avatar"
+        />
       </div>
 
       <form className="edit__form" id="editBill">
@@ -48,9 +55,12 @@ const EditBillPage = () => {
           </div>
 
           <div className="edit__people-container">
-            <button className="edit__add edit__add--item" onClick={addItemPerson}></button>
+            <button
+              className="edit__add edit__add--item"
+              onClick={addItemPerson}
+            ></button>
             {itemPeople.map((person) => {
-              return <div className="edit__avatar"></div>
+              return <div className="edit__avatar"></div>;
             })}
           </div>
         </div>
@@ -89,7 +99,12 @@ const EditBillPage = () => {
         </div>
       </form>
 
-      <EditPersonNameModal open={open} close={() => setOpen(false)}/>
+      <EditPersonNameModal
+        open={open}
+        close={() => setOpen(false)}
+        setName={setName}
+        setPersonId={setPersonId}
+      />
     </main>
   );
 };

@@ -1,23 +1,37 @@
 import "./EditPersonNameModal.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-const EditPersonNameModal = ({ open, close }) => {
-  const [name, setName] = useState("");
+const EditPersonNameModal = ({ open, close, setName, setPersonId }) => {
+  const [text, setText] = useState("");
   const [showError, setShowError] = useState("");
+  const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+
+  // Clears any text in input upon modal opening
+  useEffect(() => {
+    setText("");
+  }, [open]);
 
   const handleChange = (event) => {
     if (event.target.value !== "") {
       setShowError("");
     }
-    setName(event.target.value);
+    setText(event.target.value);
   };
 
+
+  // Post request to add new person to database
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    if (name === "") {
-      setShowError(true);
+    if (text === "") {
+      return setShowError(true);
     }
+    const response = await axios.post(`${BASE_URL}/people`, {name: text});
+
+    // Set state variables to the new person pass back to parent
+    setPersonId(response.data.id);
+    setName(text);
+    close();
   };
 
   if (!open) return null;
@@ -41,7 +55,7 @@ const EditPersonNameModal = ({ open, close }) => {
             id="name"
             name="name"
             placeholder="Name"
-            value={name}
+            value={text}
             onChange={handleChange}
           />
           { showError && <p className="editPerson__error">Person must be named</p> }
