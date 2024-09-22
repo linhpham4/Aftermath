@@ -2,10 +2,11 @@ import "./HomePage.scss";
 import logo from "../../assets/logo/aftermath_logo.svg";
 import axios from "axios";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 const HomePage = () => {
-
   const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+  const { hostId } = useParams();
   const [image, setImage] = useState(null);
 
   // Set state variable as image file upload
@@ -18,7 +19,8 @@ const HomePage = () => {
   // POST request to send image to server public/images folder
   const handleSubmit = async(event) => {
     event.preventDefault();
-    await axios.post(`${BASE_URL}/bills`, image);
+    console.log(hostId)
+    await axios.post(`${BASE_URL}/bills/${hostId}`, image);
   };
 
   return (

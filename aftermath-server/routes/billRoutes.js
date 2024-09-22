@@ -17,12 +17,12 @@ const storage = multer.diskStorage({
 const upload = multer({storage: storage});
 
 router
-    .route("/")
+    .route("/:hostId")
     .post(upload.any(), billController.saveBill)
     .get(billController.getAllBills);
 
 router
-    .route("/:billId")
+    .route("/:hostId/:billId")
     .get(billController.getBill)
     .put(billController.editBill)
     .delete(billController.removeBill);

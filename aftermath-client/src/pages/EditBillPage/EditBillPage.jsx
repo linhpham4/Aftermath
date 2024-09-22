@@ -6,6 +6,10 @@ import axios from "axios";
 import EditPersonNameModal from "../../components/EditPersonNameModal/EditPersonNameModal";
 
 const EditBillPage = () => {
+  const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+  const { billId } = useParams();
+  const { hostId } = useParams();
+
   const [open, setOpen] = useState(false);
   const [bill, setBill] = useState({
     restaurant: "",
@@ -19,16 +23,13 @@ const EditBillPage = () => {
   const [name, setName] = useState("");
   const [personId, setPersonId] = useState(null);
   const [color, setColor] = useState(null);
-  const [people, setPeople] = useState([{ id: 1, name: "You", color: 0 }]);
+  const [people, setPeople] = useState([{ id: hostId, name: "You", color: 0 }]);
   const [itemPeople, setItemPeople] = useState([]);
 
-  const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
-  const { id } = useParams();
-
-  //Get data for bill matching {id}
+  //Get data for bill matching {billId}
   const getBill = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/bills/${id}`);
+      const response = await axios.get(`${BASE_URL}/bills/${hostId}/${billId}`);
       setBill(response.data);
 
       const lineItems = response.data.line_items;
@@ -40,7 +41,7 @@ const EditBillPage = () => {
 
   useEffect(() => {
     getBill();
-  }, [id]);
+  }, [billId]);
 
   // Update state variable for changes made in bill input fields
   const handleBill = (event) => {

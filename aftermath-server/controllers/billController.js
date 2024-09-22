@@ -49,6 +49,13 @@ const convertBill = async (imageUrl) => {
 // Call convertBill and save the response to database
 const saveBill = async (req, res) => {
   try {
+    const hostId = req.params.hostId;
+
+    const foundPerson = await knex("people").where({ id: hostId }).select();
+    if (foundPerson.length === 0) {
+      res.status(404).json(`Person with ID ${hostId} cannot be found`);
+    }
+
     // Order image files in public/images folder from latest to oldest
     const orderFiles = (dir) => {
       return fs.readdirSync(dir)
@@ -78,15 +85,9 @@ const saveBill = async (req, res) => {
       }
     }
 
-    /* 
-      ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-      │ host_id will change dynamically later when there are multiple users                                                         │
-      └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-     */
-
     // Add the necessary data from Veryfi API response to bills table
     const newBill = await knex("bills").insert({
-      host_id: 1,
+      host_id: hostId,
       restaurant: bill.vendor.name,
       subtotal: bill.subtotal,
       tax: bill.tax,
@@ -136,14 +137,20 @@ const saveBill = async (req, res) => {
 //---------------------------------------------------------------------------------------------
 
 // Get data for all bills
-const getAllBills = async (_req, res) => {
+const getAllBills = async (req, res) => {
   try {
-    const billsList = await knex("bills").select(
+    const hostId = req.params.hostId;
+
+    const billsList = await knex("bills").where({ host_id: hostId }).select(
       "id",
       "host_id",
       "restaurant",
       "created_at"
     );
+
+    if(billsList.length === 0) {
+      res.status(404).json(`Person with ID ${hostId} has not created any bills`);
+    }
 
     res.status(200).json(billsList);
   } catch (error) {
