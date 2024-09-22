@@ -24,7 +24,7 @@ const EditBillPage = () => {
   const [name, setName] = useState("");
   const [personId, setPersonId] = useState(null);
   const [color, setColor] = useState(null);
-  const [people, setPeople] = useState([{ id: hostId, name: "You", color: 0 }]);
+  const [people, setPeople] = useState([{ id: Number(hostId), name: "You", color: 0 }]);
   const [bill, setBill] = useState(initialBill);
   const [items, setItems] = useState([]);
   const [itemPeople, setItemPeople] = useState([]);
@@ -61,6 +61,7 @@ const EditBillPage = () => {
 
   const addItemPerson = (event) => {
     event.preventDefault();
+    
     setItemPeople([...itemPeople, ""]);
   };
 
@@ -134,12 +135,12 @@ const EditBillPage = () => {
   if (bill === initialBill) {
     return <h1>Loading...</h1>;
   }
-console.log(bill)
+
   return (
     <main className="edit">
       <div className="edit__header">
         <button className="edit__add" onClick={() => setOpen(true)}></button>
-        {/* Dynamically render an avatar for each person with a different color */}
+        {/* Dynamically render an avatar for each person with a different color ------------------ */}
         {/* ******** Still need to generate individual prices Dynamically********************** */}
         {people.map((person) => (
           <div className="edit__person" key={person.id}>
@@ -156,7 +157,7 @@ console.log(bill)
       </div>
 
       <form className="edit__form" id="editBill">
-        {/* Dynamically generated line items ----------------------------------------------- */}
+        {/* Dynamically generated line items ----------------------------------------------------- */}
         {items.map((item) => (
           <div className="edit__item" key={item.id}>
             <div className="edit__input-container">
@@ -186,18 +187,21 @@ console.log(bill)
               />
             </div>
 
-            <div className="edit__people-container">
-              <button
-                className="edit__add edit__add--item"
-                onClick={addItemPerson}
-              ></button>
-              {itemPeople.map((person) => {
-                <img
-                className="edit__avatar"
-                src={avatar}
-                alt="avatar"
-                style={{ filter: `hue-rotate(${person.color}deg)` }}
-              />
+            <div className="edit__people-container">    
+            {/* Dynamically render radio buttons based on list of people ----------- */}
+              {people.map((person) => {
+                return(
+                  <input
+                    key={person.id}
+                    className="edit__radio" 
+                    type="radio"
+                    id={person.id}
+                    name="assigned" 
+                    value={person.name}
+                    onChange={setItemPeople}               
+                    style={{ filter: `hue-rotate(${person.color}deg)` }}
+                  />  
+                )
               })}
             </div>
           </div>
