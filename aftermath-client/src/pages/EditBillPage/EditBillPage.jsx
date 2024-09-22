@@ -21,12 +21,12 @@ const EditBillPage = () => {
   };
 
   const [open, setOpen] = useState(false);
-  const [bill, setBill] = useState(initialBill);
-  const [items, setItems] = useState([]);
   const [name, setName] = useState("");
   const [personId, setPersonId] = useState(null);
   const [color, setColor] = useState(null);
   const [people, setPeople] = useState([{ id: hostId, name: "You", color: 0 }]);
+  const [bill, setBill] = useState(initialBill);
+  const [items, setItems] = useState([]);
   const [itemPeople, setItemPeople] = useState([]);
 
   //Get data for bill matching {billId}
@@ -46,28 +46,24 @@ const EditBillPage = () => {
     getBill();
   }, [billId]);
 
-  // Update state variable for changes made in bill input fields
-  const handleBill = (event) => {
-    const name = event.target.name;
-    let value = parseFloat(event.target.value);
+   // When new person is created, they get added to the people state variable
+   useEffect(() => {
+    if (personId !== null) {
+      const newPerson = {
+        id: personId,
+        name: name,
+        color: color,
+      };
 
-    setBill((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+      setPeople([...people, newPerson]);
+    }
+  }, [personId]);
+
+  const addItemPerson = (event) => {
+    event.preventDefault();
+    setItemPeople([...itemPeople, ""]);
   };
 
-  // Update bill total when subtotal, tax, or tip changes
-  const updateTotal = () => {
-    setBill((prevState) => ({
-      ...prevState,
-      total: parseFloat(prevState.subtotal + prevState.tax + prevState.tip).toFixed(2),
-    }));
-  };
-
-  useEffect(() => {
-    updateTotal();
-  }, [bill.subtotal, bill.tax, bill.tip]);
 
   // Update state variable for changes made in item input fields
   const handleItem = (id, event) => {
@@ -92,25 +88,29 @@ const EditBillPage = () => {
       })
     );
   };
-  console.log(bill);
 
-  // When new person is created, they get added to the people state variable
-  useEffect(() => {
-    if (personId !== null) {
-      const newPerson = {
-        id: personId,
-        name: name,
-        color: color,
-      };
+  // Update state variable for changes made in bill input fields
+  const handleBill = (event) => {
+    const name = event.target.name;
+    let value = parseFloat(event.target.value);
 
-      setPeople([...people, newPerson]);
-    }
-  }, [personId]);
-
-  const addItemPerson = (event) => {
-    event.preventDefault();
-    setItemPeople([...itemPeople, ""]);
+    setBill((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
+
+  // Update bill total when subtotal, tax, or tip changes
+  const updateTotal = () => {
+    setBill((prevState) => ({
+      ...prevState,
+      total: parseFloat(prevState.subtotal + prevState.tax + prevState.tip).toFixed(2),
+    }));
+  };
+
+  useEffect(() => {
+    updateTotal();
+  }, [bill.subtotal, bill.tax, bill.tip]);
 
   if (bill === initialBill) {
     return <h1>Loading...</h1>;
