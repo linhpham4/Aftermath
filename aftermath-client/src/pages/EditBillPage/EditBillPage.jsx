@@ -41,7 +41,8 @@ const EditBillPage = () => {
         bill_id: Number(billId),
         description: item.description,
         item_total: item.item_total,
-        assigned_people:[]
+        assigned_people:[],
+        split_total: 0
       })));
 
     } catch (error) {
@@ -74,8 +75,22 @@ const EditBillPage = () => {
           const isAssigned = item.assigned_people.includes(personId);
           const newassigned_people = isAssigned
             ? item.assigned_people.filter((id) => id !== personId)
-            : [...item.assigned_people, personId];
+            : [...item.assigned_people, personId]
           return { ...item, assigned_people: newassigned_people };
+        }
+        return item;
+      })
+    ));
+    updateSplit(itemId);
+  };
+
+  // Split item_total by how many people are assigned to the item
+  const updateSplit = (itemId) => {
+    setItems((prevState) => (
+      prevState.map((item) => {
+        if (item.id === itemId) {
+          const splitTotal = item.item_total / item.assigned_people.length;
+          return {...item, split_total: splitTotal};
         }
         return item;
       })
