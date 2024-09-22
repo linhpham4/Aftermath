@@ -27,7 +27,6 @@ const EditBillPage = () => {
   const [people, setPeople] = useState([{ id: Number(hostId), name: "You", color: 0 }]);
   const [bill, setBill] = useState(initialBill);
   const [items, setItems] = useState([]);
-  const [itemPeople, setItemPeople] = useState([]);
 
   //Get data for bill matching {billId}
   const getBill = async () => {
@@ -36,7 +35,15 @@ const EditBillPage = () => {
       setBill(response.data);
 
       const lineItems = response.data.line_items;
-      setItems(lineItems);
+      setItems(lineItems.map((item) => ({
+        ...item, 
+        id: item.id,
+        bill_id: Number(billId),
+        description: item.description,
+        item_total: item.item_total,
+        assigned_people:[]
+      })));
+
     } catch (error) {
       console.log(error);
     }
@@ -59,12 +66,21 @@ const EditBillPage = () => {
     }
   }, [personId]);
 
-  const addItemPerson = (event) => {
-    event.preventDefault();
-    
-    setItemPeople([...itemPeople, ""]);
+  // Assigns a person to an item when checkbox is clicked & removes them if they are already assigned
+  const handleAssign = (itemId, personId) => {
+    setItems((prevState) => (
+      prevState.map((item) => {
+        if (item.id === itemId) {
+          const isAssigned = item.assigned_people.includes(personId);
+          const newassigned_people = isAssigned
+            ? item.assigned_people.filter((id) => id !== personId)
+            : [...item.assigned_people, personId];
+          return { ...item, assigned_people: newassigned_people };
+        }
+        return item;
+      })
+    ));
   };
-
 
   // Update state variable for changes made in item input fields
   const handleItem = (id, event) => {
@@ -191,16 +207,21 @@ const EditBillPage = () => {
             {/* Dynamically render radio buttons based on list of people ----------- */}
               {people.map((person) => {
                 return(
-                  <input
-                    key={person.id}
-                    className="edit__radio" 
-                    type="radio"
-                    id={person.id}
-                    name="assigned" 
-                    value={person.name}
-                    onChange={setItemPeople}               
-                    style={{ filter: `hue-rotate(${person.color}deg)` }}
-                  />  
+                  <div className="edit__person-container" key={person.id}>
+                    <label className="edit__label">
+                      <input
+                        className={`edit__checkbox`} 
+                        type="checkbox"
+                        id={`item${item.id}_person${person.id}`}
+                        name="assign" 
+                        value={person.name}
+                        onChange={() => handleAssign(item.id, person.id)}   
+                        checked={item.assigned_people.includes(person.id)} 
+                        style={{filter: `hue-rotate(${person.color}deg)`}}
+                      />
+                      {person.name}
+                    </label> 
+                  </div>
                 )
               })}
             </div>
