@@ -143,7 +143,7 @@ const EditBillPage = () => {
               <input
                 className="edit__input edit__input--quantity"
                 type="number"
-                id="quantity"
+                id={`quantity_${item.id}`}
                 name="quantity"
                 value={item.quantity}
                 onChange={(event) => handleItem(item.id, event)}
@@ -151,7 +151,7 @@ const EditBillPage = () => {
               <input
                 className="edit__input edit__input--description"
                 type="text"
-                id="description"
+                id={`description_${item.id}`}
                 name="description"
                 value={item.description}
                 onChange={(event) => handleItem(item.id, event)}
@@ -159,8 +159,8 @@ const EditBillPage = () => {
               <input
                 className="edit__input edit__input--total"
                 type="number"
-                id="itemTotal"
-                name="itemTotal"
+                id={`item_total_${item.id}`}
+                name="item_total"
                 value={item.item_total}
                 onChange={(event) => handleItem(item.id, event)}
               />
