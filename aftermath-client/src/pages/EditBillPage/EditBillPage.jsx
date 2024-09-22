@@ -89,6 +89,23 @@ const EditBillPage = () => {
     );
   };
 
+  // Update subtotal when any item total changes
+  const updateSubtotal = () => {
+    // Sums all item totals
+    const itemsTotal = items.reduce((accumulator, item) => {
+      return accumulator + item.item_total;
+    }, 0)
+
+    setBill((prevState) => ({
+      ...prevState,
+      subtotal: Number(parseFloat(itemsTotal).toFixed(2)),
+    }))
+  }
+
+  useEffect(() => {
+    updateSubtotal();
+  }, [items])
+
   // Update state variable for changes made in bill input fields
   const handleBill = (event) => {
     const name = event.target.name;
@@ -102,9 +119,11 @@ const EditBillPage = () => {
 
   // Update bill total when subtotal, tax, or tip changes
   const updateTotal = () => {
+    const updatedTotal = Number(bill.subtotal) + Number(bill.tax) + Number(bill.tip);
+
     setBill((prevState) => ({
       ...prevState,
-      total: parseFloat(prevState.subtotal + prevState.tax + prevState.tip).toFixed(2),
+      total: Number(parseFloat(updatedTotal).toFixed(2)),
     }));
   };
 
@@ -115,7 +134,7 @@ const EditBillPage = () => {
   if (bill === initialBill) {
     return <h1>Loading...</h1>;
   }
-
+console.log(bill)
   return (
     <main className="edit">
       <div className="edit__header">
