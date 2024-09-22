@@ -49,12 +49,11 @@ const EditBillPage = () => {
   // Update state variable for changes made in bill input fields
   const handleBill = (event) => {
     const name = event.target.name;
-    // Limits decimal places to 2
-    let value = parseFloat(event.target.value).toFixed(2);
+    let value = parseFloat(event.target.value);
 
     setBill((prevState) => ({
       ...prevState,
-      [name]: Number(value),
+      [name]: value,
     }));
   };
 
@@ -62,7 +61,7 @@ const EditBillPage = () => {
   const updateTotal = () => {
     setBill((prevState) => ({
       ...prevState,
-      total: Number(prevState.subtotal + prevState.tax + prevState.tip).toFixed(2),
+      total: parseFloat(prevState.subtotal + prevState.tax + prevState.tip).toFixed(2),
     }));
   };
 
@@ -74,24 +73,26 @@ const EditBillPage = () => {
   const handleItem = (id, event) => {
     const name = event.target.name;
     const value = event.target.value;
+    const type = event.target.type;
 
     // Only updates for the item in the items array with id matching the one being passed
+    // Updates the value with the correct data type
     setItems((prevState) =>
-      prevState.map((item) =>
-        item.id === id ? { ...item, [name]: value } : item
-      )
+      prevState.map((item) => {
+        if (item.id === id) {
+          if (type === "number" && name === "quantity") {
+            return ({ ...item, [name]: Number(value) })
+          } else if (type === "number" && name === "item_total") {
+            return ({ ...item, [name]: parseFloat(value) })
+          } else if (type === "text") {
+            return ({ ...item, [name]: value })
+          }
+        }
+        return item;
+      })
     );
   };
-
-
-  console.log(items);
-
-  //   if(typeof value === "number"){
-  //     console.log("nummm")
-  //   }
-
-  //   // Limits decimal places to 2
-  //   // let value = parseFloat(event.target.value).toFixed(2);
+  console.log(bill);
 
   // When new person is created, they get added to the people state variable
   useEffect(() => {
