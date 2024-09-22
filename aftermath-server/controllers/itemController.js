@@ -48,7 +48,7 @@ const addItem = async (req, res) => {
       !req.body.bill_id ||
       !req.body.description ||
       req.body.quantity === undefined ||
-      req.body.total === undefined
+      req.body.item_total === undefined
     ) {
       return res.status(400).json("Please provide all required item information");
     };
@@ -60,12 +60,12 @@ const addItem = async (req, res) => {
     };
 
     // Checks if the value of quantity and total is a number
-    if (typeof req.body.quantity !== "number" || typeof req.body.total !== "number") {
+    if (typeof req.body.quantity !== "number" || typeof req.body.item_total !== "number") {
       return res.status(400).json("Quantity and total must be a number");
     };
 
     // Checks that the value of quantity and total is not zero
-    if (req.body.quantity === 0 || req.body.total === 0){
+    if (req.body.quantity === 0 || req.body.item_total === 0){
       return res.status(400).json("Quantity and total cannot be zero for an existing item");
     };
 
@@ -97,7 +97,7 @@ const editItem = async (req, res) => {
       !req.body.bill_id ||
       !req.body.description ||
       req.body.quantity === undefined ||
-      req.body.total === undefined
+      req.body.item_total === undefined
     ) {
       return res.status(400).json("Please provide all required item information");
     };
@@ -109,12 +109,12 @@ const editItem = async (req, res) => {
     };
 
     // Checks if the value of quantity and total is a number
-    if (typeof req.body.quantity !== "number" || typeof req.body.total !== "number") {
+    if (typeof req.body.quantity !== "number" || typeof req.body.item_total !== "number") {
       return res.status(400).json("Quantity and total must be a number");
     };
 
     // Checks that the value of quantity and total is not zero
-    if (req.body.quantity === 0 || req.body.total === 0){
+    if (req.body.quantity === 0 || req.body.item_total === 0){
       return res.status(400).json("Quantity and total cannot be zero for an existing item");
     };
 

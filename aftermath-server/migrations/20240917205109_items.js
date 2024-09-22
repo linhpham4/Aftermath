@@ -14,7 +14,7 @@ export function up(knex) {
       .onDelete("CASCADE");
     table.string("description").notNullable();
     table.integer("quantity").notNullable();
-    table.decimal("total", 8, 2).notNullable();
+    table.decimal("item_total", 8, 2).notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table
       .timestamp("updated_at")

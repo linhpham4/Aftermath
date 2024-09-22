@@ -83,6 +83,16 @@ const EditBillPage = () => {
     );
   };
 
+
+  console.log(items);
+
+  //   if(typeof value === "number"){
+  //     console.log("nummm")
+  //   }
+
+  //   // Limits decimal places to 2
+  //   // let value = parseFloat(event.target.value).toFixed(2);
+
   // When new person is created, they get added to the people state variable
   useEffect(() => {
     if (personId !== null) {
@@ -151,7 +161,7 @@ const EditBillPage = () => {
                 type="number"
                 id="itemTotal"
                 name="itemTotal"
-                value={item.total}
+                value={item.item_total}
                 onChange={(event) => handleItem(item.id, event)}
               />
             </div>

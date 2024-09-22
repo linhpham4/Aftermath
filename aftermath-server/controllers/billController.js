@@ -104,7 +104,7 @@ const saveBill = async (req, res) => {
         bill_id: newBillId,
         description: line_item.description,
         quantity: line_item.quantity,
-        total: line_item.total,
+        item_total: line_item.total,
       });
     });
 
@@ -124,7 +124,7 @@ const saveBill = async (req, res) => {
 
     const newItemsData = await knex("items")
       .where({ bill_id: newBillId })
-      .select("items.id", "items.description", "items.quantity", "items.total");
+      .select("items.id", "items.description", "items.quantity", "items.item_total");
 
     const responseObj = { ...newBillData[0], line_items: newItemsData };
 
