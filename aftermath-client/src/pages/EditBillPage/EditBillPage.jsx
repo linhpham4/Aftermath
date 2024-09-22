@@ -10,15 +10,18 @@ const EditBillPage = () => {
   const { billId } = useParams();
   const { hostId } = useParams();
 
-  const [open, setOpen] = useState(false);
-  const [bill, setBill] = useState({
+  const initialBill = {
+    host_id: 0,
     restaurant: "",
     subtotal: 0,
     tax: 0,
     tip: 0,
     total: 0,
     image_url: "",
-  });
+  };
+
+  const [open, setOpen] = useState(false);
+  const [bill, setBill] = useState(initialBill);
   const [items, setItems] = useState([]);
   const [name, setName] = useState("");
   const [personId, setPersonId] = useState(null);
@@ -67,6 +70,19 @@ const EditBillPage = () => {
     updateTotal();
   }, [bill.subtotal, bill.tax, bill.tip]);
 
+  // Update state variable for changes made in item input fields
+  const handleItem = (id, event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    // Only updates for the item in the items array with id matching the one being passed
+    setItems((prevState) =>
+      prevState.map((item) =>
+        item.id === id ? { ...item, [name]: value } : item
+      )
+    );
+  };
+
   // When new person is created, they get added to the people state variable
   useEffect(() => {
     if (personId !== null) {
@@ -85,7 +101,7 @@ const EditBillPage = () => {
     setItemPeople([...itemPeople, ""]);
   };
 
-  if (!bill) {
+  if (bill === initialBill) {
     return <h1>Loading...</h1>;
   }
 
@@ -110,16 +126,17 @@ const EditBillPage = () => {
       </div>
 
       <form className="edit__form" id="editBill">
-        {/* Dynamically generated ----------------------------------------------- */}
+        {/* Dynamically generated line items ----------------------------------------------- */}
         {items.map((item) => (
-          <div className="edit__item">
+          <div className="edit__item" key={item.id}>
             <div className="edit__input-container">
               <input
                 className="edit__input edit__input--quantity"
-                type="text"
+                type="number"
                 id="quantity"
                 name="quantity"
                 value={item.quantity}
+                onChange={(event) => handleItem(item.id, event)}
               />
               <input
                 className="edit__input edit__input--description"
@@ -127,6 +144,7 @@ const EditBillPage = () => {
                 id="description"
                 name="description"
                 value={item.description}
+                onChange={(event) => handleItem(item.id, event)}
               />
               <input
                 className="edit__input edit__input--total"
@@ -134,6 +152,7 @@ const EditBillPage = () => {
                 id="itemTotal"
                 name="itemTotal"
                 value={item.total}
+                onChange={(event) => handleItem(item.id, event)}
               />
             </div>
 
@@ -153,6 +172,7 @@ const EditBillPage = () => {
             </div>
           </div>
         ))}
+        {/* ---------------------------------------------------------------------------------------- */}
 
         <div className="edit__item edit__item--end">
           <p className="edit__text">
@@ -163,7 +183,7 @@ const EditBillPage = () => {
             Tip
             <br />
           </p>
-          <form className="edit__input-container edit__input-container--column">
+          <div className="edit__input-container edit__input-container--column">
             <input
               className="edit__input edit__input--gray"
               type="number"
@@ -189,7 +209,7 @@ const EditBillPage = () => {
               value={bill.tip}
               onChange={handleBill}
             />
-          </form>
+          </div>
         </div>
 
         <div className="edit__item edit__item--end">
