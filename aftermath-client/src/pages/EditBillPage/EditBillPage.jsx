@@ -20,13 +20,21 @@ const EditBillPage = () => {
     image_url: "",
   };
 
+  const host = {
+    id: Number(hostId), 
+    name: "You", 
+    color: 0, 
+    person_total: 0
+  }
+
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [personId, setPersonId] = useState(null);
   const [color, setColor] = useState(null);
-  const [people, setPeople] = useState([{ id: Number(hostId), name: "You", color: 0 }]);
+  const [people, setPeople] = useState([host]);
   const [bill, setBill] = useState(initialBill);
   const [items, setItems] = useState([]);
+  const [assignedItems, setAssignedItems] = useState([]);
 
   //Get data for bill matching {billId}
   const getBill = async () => {
@@ -36,15 +44,13 @@ const EditBillPage = () => {
 
       const lineItems = response.data.line_items;
       setItems(lineItems.map((item) => ({
-        ...item, 
+        ...item,
         id: item.id,
         bill_id: Number(billId),
         description: item.description,
         item_total: item.item_total,
-        assigned_people:[],
-        split_total: 0
-      })));
-
+        }))
+      );
     } catch (error) {
       console.log(error);
     }
@@ -52,15 +58,28 @@ const EditBillPage = () => {
 
   useEffect(() => {
     getBill();
-  }, [billId]);
+  }, []);
 
-   // When new person is created, they get added to the people state variable
-   useEffect(() => {
+  useEffect(() => {
+    if (items.length > 0) {
+      const initialAssigments = items.map((item) => ({
+        id: item.id,
+        assigned_people: [],
+        item_total: item.item_total,
+        split_total: item.item_total,
+      }));
+      setAssignedItems(initialAssigments);
+    }
+  }, [items]);
+
+  // When new person is created, they get added to the people state variable
+  useEffect(() => {
     if (personId !== null) {
       const newPerson = {
         id: personId,
         name: name,
         color: color,
+        person_total: 0,
       };
 
       setPeople([...people, newPerson]);
@@ -69,32 +88,49 @@ const EditBillPage = () => {
 
   // Assigns a person to an item when checkbox is clicked & removes them if they are already assigned
   const handleAssign = (itemId, personId) => {
-    setItems((prevState) => (
-      prevState.map((item) => {
-        if (item.id === itemId) {
-          const isAssigned = item.assigned_people.includes(personId);
-          const newassigned_people = isAssigned
-            ? item.assigned_people.filter((id) => id !== personId)
-            : [...item.assigned_people, personId]
-          return { ...item, assigned_people: newassigned_people };
+    setAssignedItems((prevState) =>
+      prevState.map((assignedItem) => {
+        if (assignedItem.id === itemId) {
+          const isAssigned = assignedItem.assigned_people.includes(personId);
+          const newAssignedPeople = isAssigned
+            ? assignedItem.assigned_people.filter((id) => id !== personId)
+            : [...assignedItem.assigned_people, personId];
+          return { ...assignedItem, assigned_people: newAssignedPeople };
         }
-        return item;
+        return assignedItem;
       })
-    ));
-    updateSplit(itemId);
+    );
+    updateSplit(itemId, personId);
+  };
+
+  // Will check the checkbox if:
+  // an item in assignedItems has id matching that of the item currently being iterated over
+  // and the assigned_people property includes current person being iterated over
+  const isChecked = (itemId, personId) => {
+    const foundItem = assignedItems.find((assignedItem) => assignedItem.id === itemId);
+    if (foundItem && foundItem.assigned_people.includes(personId)) {
+      return true;
+    } 
+    return false;
   };
 
   // Split item_total by how many people are assigned to the item
   const updateSplit = (itemId) => {
-    setItems((prevState) => (
-      prevState.map((item) => {
-        if (item.id === itemId) {
-          const splitTotal = item.item_total / item.assigned_people.length;
-          return {...item, split_total: splitTotal};
+    setAssignedItems((prevState) =>
+      prevState.map((assignedItem) => {
+        if (assignedItem.id === itemId) {
+          const splitTotal = assignedItem.item_total / assignedItem.assigned_people.length;
+          return { ...assignedItem, split_total: splitTotal };
         }
-        return item;
+        return assignedItem;
       })
-    ));
+    );
+    // updatePersonTotal(itemId, personId);
+  };
+
+  // Update person_total property in people state variable when they are assigned to an item
+  const updatePersonTotal = (itemId, personId) => {
+  
   };
 
   // Update state variable for changes made in item input fields
@@ -109,11 +145,11 @@ const EditBillPage = () => {
       prevState.map((item) => {
         if (item.id === id) {
           if (type === "number" && name === "quantity") {
-            return ({ ...item, [name]: Number(value) })
+            return { ...item, [name]: Number(value) };
           } else if (type === "number" && name === "item_total") {
-            return ({ ...item, [name]: parseFloat(value) })
+            return { ...item, [name]: parseFloat(value) };
           } else if (type === "text") {
-            return ({ ...item, [name]: value })
+            return { ...item, [name]: value };
           }
         }
         return item;
@@ -126,17 +162,17 @@ const EditBillPage = () => {
     // Sums all item totals
     const itemsTotal = items.reduce((accumulator, item) => {
       return accumulator + item.item_total;
-    }, 0)
+    }, 0);
 
     setBill((prevState) => ({
       ...prevState,
       subtotal: Number(parseFloat(itemsTotal).toFixed(2)),
-    }))
-  }
+    }));
+  };
 
   useEffect(() => {
     updateSubtotal();
-  }, [items])
+  }, [items]);
 
   // Update state variable for changes made in bill input fields
   const handleBill = (event) => {
@@ -175,7 +211,7 @@ const EditBillPage = () => {
         {/* ******** Still need to generate individual prices Dynamically********************** */}
         {people.map((person) => (
           <div className="edit__person" key={person.id}>
-            <p className="edit__person-total">$0.00</p>
+            <p className="edit__person-total">{person.person_total}</p>
             <img
               className="edit__avatar"
               src={avatar}
@@ -218,26 +254,26 @@ const EditBillPage = () => {
               />
             </div>
 
-            <div className="edit__people-container">    
-            {/* Dynamically render radio buttons based on list of people ----------- */}
+            <div className="edit__people-container">
+              {/* Dynamically render radio buttons based on list of people ----------- */}
               {people.map((person) => {
-                return(
+                return (
                   <div className="edit__person-container" key={person.id}>
                     <label className="edit__label">
                       <input
-                        className={`edit__checkbox`} 
+                        className={`edit__checkbox`}
                         type="checkbox"
                         id={`item${item.id}_person${person.id}`}
-                        name="assign" 
+                        name="assign"
                         value={person.name}
-                        onChange={() => handleAssign(item.id, person.id)}   
-                        checked={item.assigned_people.includes(person.id)} 
-                        style={{filter: `hue-rotate(${person.color}deg)`}}
+                        onChange={() => handleAssign(item.id, person.id)}
+                        checked={isChecked(item.id, person.id)}
+                        style={{ filter: `hue-rotate(${person.color}deg)` }}
                       />
                       {person.name}
-                    </label> 
+                    </label>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
