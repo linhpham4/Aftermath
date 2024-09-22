@@ -172,7 +172,7 @@ const getBill = async (req, res) => {
 
     const billItems = await knex("items")
       .where({ bill_id: id })
-      .select("id", "description", "quantity", "total");
+      .select("id", "description", "quantity", "item_total");
 
     const billDetails = { ...selectedBill[0], line_items: billItems };
 
