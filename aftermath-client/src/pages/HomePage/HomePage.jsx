@@ -1,14 +1,30 @@
 import "./HomePage.scss";
 import logo from "../../assets/logo/aftermath_logo.svg";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const HomePage = () => {
   const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
-  const { hostId } = useParams();
+  const { personId } = useParams();
   const [image, setImage] = useState(null);
+  const [hostId, setHostId] = useState (0);
+
+  // If home page is accessed from root directory, create new person to set as host
+  const declareHost = async() => {
+    if(!personId) {
+      const response = await axios.post(`${BASE_URL}/people`, {name: "Guest"});
+      const guestId = response.data.id;
+      setHostId(guestId);
+    } else {
+      setHostId(personId);
+    };
+  };
+  
+  useEffect(() => {
+    declareHost();
+  }, []);
 
   // Set state variable as image file upload
   const handleInput = (event) => {
