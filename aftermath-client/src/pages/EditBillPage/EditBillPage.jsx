@@ -34,7 +34,6 @@ const EditBillPage = () => {
   const [people, setPeople] = useState([host]);
   const [bill, setBill] = useState(initialBill);
   const [items, setItems] = useState([]);
-  const [assignedItems, setAssignedItems] = useState([]);
 
   //Get data for bill matching {billId}
   const getBill = async () => {
@@ -61,17 +60,6 @@ const EditBillPage = () => {
     getBill();
   }, []);
 
-  useEffect(() => {
-    if (items.length > 0) {
-      const initialAssigments = items.map((item) => ({
-        item_id: item.id,
-        person_id: 0,
-        // split_total: item.item_total,
-      }));
-      setAssignedItems(initialAssigments);
-    }
-  }, [items]);
-
   // When new person is created, they get added to the people state variable
   useEffect(() => {
     if (personId !== null) {
@@ -86,30 +74,50 @@ const EditBillPage = () => {
     }
   }, [personId]);
 
+  // Assigns a person to an item when checkbox is clicked & removes them if they are already assigned
+  const handleAssign = (itemId, personId) => {
+    setItems((prevItems) => 
+      prevItems.map((item) => {
+        if (item.id === itemId) {
+          // Checks if that item's assigned_people property has the id of the person currently being assigned
+          const isAssigned = item.assigned_people.includes(personId);
+          
+          return {...item,
+            assigned_people: isAssigned
+              ? item.assigned_people.filter(id => id !== personId) //If true, unassign the person
+              : [...item.assigned_people, personId] //If false, assign the person
+          };
+        };
+        return item;
+      })
+    );
+  };
 
-  // useEffect(() => {
-  //   updateTransactions();
-  // }, [assignedItems]);
+  // Calculates the total of all the items a person is assigned to
+  const updateAmounts = () => {
+    const newAmounts = people.map((person) => {
+      // Get all items the current person is assigned to
+      const assignedItems = items.filter(item => item.assigned_people.includes(person.id));
 
-  // // Update person_total property in people state variable when they are assigned to an item
-  // const updatePersonTotal = (updatedAssignedPeople, splitTotal, isAssigned) => {
-  //   setPeople((prevState) => {
-  //     return prevState.map((person) => {
+      // Sums the total cost of the current person's assigned items
+      const personTotal = assignedItems.reduce((accumulator, item) => {
+        // Split's the item's cost by how many people are assigned to it
+        const splitBy = item.assigned_people.length; 
+        const itemSplitTotal = splitBy > 0 ? item.item_total / splitBy : 0; 
+        return accumulator + itemSplitTotal;
+      }, 0);
+     
+      return {
+        ...person,
+        person_total: personTotal 
+      };
+    });
+    setPeople(newAmounts);
+  };
 
-  //       // If person wasn't assigned to item prior to the check box being clicked, then add splitTotal as they are now being assigned
-  //       if (updatedAssignedPeople.includes(person.id) && !isAssigned) {
-  //           return { ...person, person_total: person.person_total + splitTotal }
-
-  //       // If they were assigned to item prior to the check box being clicked, then subtract splitTotal as they are now being unassigned
-  //       } else if (!updatedAssignedPeople.includes(person.id) && isAssigned) {
-  //           return { ...person, person_total: Math.max(0, person.person_total - splitTotal) }
-  //       }
-
-  //       return person;
-  //     });
-  //   });
-  // };
- 
+  useEffect(() => {
+    updateAmounts();
+  }, [items]);
 
   // Update state variable for changes made in item input fields
   const handleItem = (id, event) => {
@@ -242,7 +250,7 @@ const EditBillPage = () => {
             </div>
 
             <div className="edit__people-container">
-              {/* Dynamically render radio buttons based on list of people ----------- */}
+              {/* Dynamically render radio buttons based on list of people ----- */}
               {people.map((person) => {
                 return (
                   <div className="edit__person-container" key={person.id}>
