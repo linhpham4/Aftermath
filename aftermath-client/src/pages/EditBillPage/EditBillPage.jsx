@@ -132,7 +132,7 @@ const EditBillPage = () => {
         } else if (!updatedAssignedPeople.includes(person.id) && isAssigned) {
             return { ...person, person_total: Math.max(0, person.person_total - splitTotal) }
         }
-console.log(person)
+
         return person;
       });
     });
@@ -161,7 +161,13 @@ console.log(person)
           if (type === "number" && name === "quantity") {
             return { ...item, [name]: Number(value) };
           } else if (type === "number" && name === "item_total") {
-            return { ...item, [name]: parseFloat(value) };
+            let parsedValue = parseFloat(value);
+
+            if (isNaN(parsedValue)) {
+              parsedValue = 0;
+            }
+
+            return { ...item, [name]: parsedValue };
           } else if (type === "text") {
             return { ...item, [name]: value };
           }
@@ -192,6 +198,10 @@ console.log(person)
   const handleBill = (event) => {
     const name = event.target.name;
     let value = parseFloat(event.target.value);
+
+    if (isNaN(value)) {
+      value = 0;
+    }
 
     setBill((prevState) => ({
       ...prevState,
