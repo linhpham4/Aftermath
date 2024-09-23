@@ -49,6 +49,7 @@ const EditBillPage = () => {
         bill_id: Number(billId),
         description: item.description,
         item_total: item.item_total,
+        assigned_people: [],
         }))
       );
     } catch (error) {
@@ -63,9 +64,9 @@ const EditBillPage = () => {
   useEffect(() => {
     if (items.length > 0) {
       const initialAssigments = items.map((item) => ({
-        id: item.id,
-        assigned_people: [],
-        split_total: item.item_total,
+        item_id: item.id,
+        person_id: 0,
+        // split_total: item.item_total,
       }));
       setAssignedItems(initialAssigments);
     }
@@ -85,67 +86,30 @@ const EditBillPage = () => {
     }
   }, [personId]);
 
-  // Assigns a person to an item when checkbox is clicked & removes them if they are already assigned
-  const handleAssign = (itemId, personId) => {
-    setAssignedItems((prevState) => {
-      return prevState.map((assignedItem) => {
-        // If an item in assignedItems has id matching that of the item currently being iterated over
-        if (assignedItem.id === itemId) {
-          // Checks if that item's assigned_people property has the id of the person currently being iterated over
-          const isAssigned = assignedItem.assigned_people.includes(personId);
-          let updatedAssignedPeople = [];
 
-          if (isAssigned) {
-            updatedAssignedPeople = assignedItem.assigned_people.filter((id) => id !== personId); //If true, unassign person
-          } else {
-            updatedAssignedPeople = [...assignedItem.assigned_people, personId]; //If false, assign person
-          }
+  // useEffect(() => {
+  //   updateTransactions();
+  // }, [assignedItems]);
 
-          // Splits current item total between assigned people & updates person_total
-          const foundItem = items.find((item) => item.id === itemId)
-          let splitTotal = 0;
+  // // Update person_total property in people state variable when they are assigned to an item
+  // const updatePersonTotal = (updatedAssignedPeople, splitTotal, isAssigned) => {
+  //   setPeople((prevState) => {
+  //     return prevState.map((person) => {
 
-          if(foundItem) {
-            updatedAssignedPeople.length > 0
-              ? splitTotal = Number(foundItem.item_total) / Number(updatedAssignedPeople.length) // If more than 1 person is assigned, split the total
-              : splitTotal = Number(foundItem.item_total) // If only 1 person is assigned, take the item total
-          };
+  //       // If person wasn't assigned to item prior to the check box being clicked, then add splitTotal as they are now being assigned
+  //       if (updatedAssignedPeople.includes(person.id) && !isAssigned) {
+  //           return { ...person, person_total: person.person_total + splitTotal }
 
-          updatePersonTotal(updatedAssignedPeople, splitTotal, isAssigned);
-          return { ...assignedItem, assigned_people: updatedAssignedPeople, split_total: splitTotal };
-        }
-        return assignedItem;
-      })
-    });
-  };
+  //       // If they were assigned to item prior to the check box being clicked, then subtract splitTotal as they are now being unassigned
+  //       } else if (!updatedAssignedPeople.includes(person.id) && isAssigned) {
+  //           return { ...person, person_total: Math.max(0, person.person_total - splitTotal) }
+  //       }
 
-  // Update person_total property in people state variable when they are assigned to an item
-  const updatePersonTotal = (updatedAssignedPeople, splitTotal, isAssigned) => {
-    setPeople((prevState) => {
-      return prevState.map((person) => {
-
-        // If person wasn't assigned to item prior to the check box being clicked, then add splitTotal as they are now being assigned
-        if (updatedAssignedPeople.includes(person.id) && !isAssigned) {
-            return { ...person, person_total: person.person_total + splitTotal }
-
-        // If they were assigned to item prior to the check box being clicked, then subtract splitTotal as they are now being unassigned
-        } else if (!updatedAssignedPeople.includes(person.id) && isAssigned) {
-            return { ...person, person_total: Math.max(0, person.person_total - splitTotal) }
-        }
-
-        return person;
-      });
-    });
-  };
-
-  // Will select checkbox if assignedItems contain the current item and person being iterated over
-  const isChecked = (itemId, personId) => {
-    const foundItem = assignedItems.find((assignedItem) => assignedItem.id === itemId);
-    if (foundItem && foundItem.assigned_people.includes(personId)) {
-      return true;
-    } 
-    return false;
-  };
+  //       return person;
+  //     });
+  //   });
+  // };
+ 
 
   // Update state variable for changes made in item input fields
   const handleItem = (id, event) => {
@@ -290,7 +254,6 @@ const EditBillPage = () => {
                         name="assign"
                         value={person.name}
                         onChange={() => handleAssign(item.id, person.id)}
-                        checked={isChecked(item.id, person.id)}
                         style={{ filter: `hue-rotate(${person.color}deg)` }}
                       />
                       {person.name}
