@@ -12,36 +12,27 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const USERNAME = process.env.USERNAME;
 const API_KEY = process.env.API_KEY;
 
-// // Upload image to Veryfi API bucket to be processed into json data
-// const convertBill = async (imageUrl) => {
-//   try {
-//     // Create new form to append image file to
-//     const form = new FormData();
-//     form.append("file", fs.createReadStream(`${imageUrl}`));
-
-//     // POST request to Veryfi API
-//     const response = await axios.post(BASE_URL, form, {
-//       headers: {
-//         "Content-Type": "multipart/form-data",
-//         Accept: "application/json",
-//         "CLIENT-ID": `${CLIENT_ID}`,
-//         AUTHORIZATION: `apikey ${USERNAME}:${API_KEY}`,
-//       },
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
-//---------------------------------------------------------------------------------------------
-
-// DELETE LATER ******
-// Use with mock data to avoid using up API call limit
+// Upload image to Veryfi API bucket to be processed into json data
 const convertBill = async (imageUrl) => {
-  const mockData = fs.readFileSync("./mockData.json");
-  return JSON.parse(mockData);
+  try {
+    // Create new form to append image file to
+    const form = new FormData();
+    form.append("file", fs.createReadStream(`${imageUrl}`));
+
+    // POST request to Veryfi API
+    const response = await axios.post(BASE_URL, form, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json",
+        "CLIENT-ID": `${CLIENT_ID}`,
+        AUTHORIZATION: `apikey ${USERNAME}:${API_KEY}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 //---------------------------------------------------------------------------------------------
