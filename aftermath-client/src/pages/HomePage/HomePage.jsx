@@ -20,6 +20,7 @@ const HomePage = () => {
   // POST request to send image to server public/images folder
   const handleSubmit = async(event) => {
     event.preventDefault();
+    alert("Uploading image now! Please wait");
     const response = await axios.post(`${BASE_URL}/bills/${hostId}`, image);
     const billId = response.data.id;
     navigate(`/host/${hostId}/edit/${billId}`);
