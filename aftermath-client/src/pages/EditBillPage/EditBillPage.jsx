@@ -68,6 +68,7 @@ const EditBillPage = () => {
         name: name,
         color: color,
         person_total: 0,
+        total_tax_tip: 0,
       };
 
       setPeople([...people, newPerson]);
@@ -109,7 +110,7 @@ const EditBillPage = () => {
      
       return {
         ...person,
-        person_total: personTotal 
+        person_total: Number(parseFloat(personTotal).toFixed(2)) 
       };
     });
     setPeople(newAmounts);
@@ -195,6 +196,25 @@ const EditBillPage = () => {
     updateTotal();
   }, [bill.subtotal, bill.tax, bill.tip]);
 
+  // Calculate each person's share of the tax and tip
+  const plusTaxTip = () => {
+    const personTotalTaxTip = people.map((person) => {
+      // The person's share of the bill's subtotal amount, tax, and tip
+      const personPortion = person.person_total / bill.subtotal;
+      const taxShare = bill.subtotal > 0 ? personPortion * bill.tax : 0;
+      const tipShare = bill.subtotal > 0 ? personPortion * bill.tip : 0;
+
+      return {...person, total_tax_tip: Number(parseFloat(person.person_total + taxShare + tipShare).toFixed(2))}
+    });
+    setPeople(personTotalTaxTip);
+  };
+  
+  useEffect(() => {
+    plusTaxTip();
+  }, [bill.tax, bill.tip]);
+
+  console.log(people);
+
   if (bill === initialBill) {
     return <h1>Loading...</h1>;
   }
@@ -206,7 +226,8 @@ const EditBillPage = () => {
         {/* Dynamically render an avatar for each person with a different color ------------------ */}
         {people.map((person) => (
           <div className="edit__person" key={person.id}>
-            <p className="edit__person-total">{`${Number(person.person_total).toFixed(2)}`}</p>
+            <p className="edit__person-total">{person.person_total}</p>
+            <p className="edit__person-total">{person.total_tax_tip}</p>
             <img
               className="edit__avatar"
               src={avatar}
