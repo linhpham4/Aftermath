@@ -2,9 +2,10 @@ import "./HomePage.scss";
 import logo from "../../assets/logo/aftermath_logo.svg";
 import axios from "axios";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
   const { hostId } = useParams();
   const [image, setImage] = useState(null);
@@ -19,8 +20,9 @@ const HomePage = () => {
   // POST request to send image to server public/images folder
   const handleSubmit = async(event) => {
     event.preventDefault();
-    console.log(hostId)
-    await axios.post(`${BASE_URL}/bills/${hostId}`, image);
+    const response = await axios.post(`${BASE_URL}/bills/${hostId}`, image);
+    const billId = response.data.id;
+    navigate(`/host/${hostId}/edit/${billId}`);
   };
 
   return (
@@ -59,7 +61,7 @@ const HomePage = () => {
       </div>
 
       <button className="home__button" form="bill" type="submit">
-        Next
+        Upload
       </button>
     </main>
   );
