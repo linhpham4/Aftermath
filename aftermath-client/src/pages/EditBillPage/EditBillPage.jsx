@@ -211,7 +211,7 @@ const EditBillPage = () => {
   
   useEffect(() => {
     plusTaxTip();
-  }, [bill.tax, bill.tip]);
+  }, [bill]);
 
   console.log(people);
 
@@ -222,12 +222,16 @@ const EditBillPage = () => {
   return (
     <main className="edit">
       <div className="edit__header">
-        <button className="edit__add" onClick={() => setOpen(true)}></button>
+        <div className="edit__left-container">
+          <p className="edit__person-total">Total</p>
+          <p className="edit__tax-tip-label">+ Tax & Tip</p>
+          <button className="edit__add" onClick={() => setOpen(true)}></button>
+        </div>
         {/* Dynamically render an avatar for each person with a different color ------------------ */}
         {people.map((person) => (
           <div className="edit__person" key={person.id}>
-            <p className="edit__person-total">{person.person_total}</p>
-            <p className="edit__person-total">{person.total_tax_tip}</p>
+            <p className="edit__person-total">{`$ ${person.person_total}`}</p>
+            <p className="edit__person-tax-tip">{`$ ${person.total_tax_tip}`}</p>
             <img
               className="edit__avatar"
               src={avatar}
@@ -261,7 +265,7 @@ const EditBillPage = () => {
                 onChange={(event) => handleItem(item.id, event)}
               />
               <input
-                className="edit__input edit__input--total"
+                className="edit__input-money edit__input-money--item-total"
                 type="number"
                 id={`item_total_${item.id}`}
                 name="item_total"
@@ -306,7 +310,7 @@ const EditBillPage = () => {
           </p>
           <div className="edit__input-container edit__input-container--column">
             <input
-              className="edit__input edit__input--gray"
+              className="edit__input-money edit__input-money--subtotal"
               type="number"
               id="subtotal"
               name="subtotal"
@@ -315,7 +319,7 @@ const EditBillPage = () => {
               disabled="disabled"
             />
             <input
-              className="edit__input"
+              className="edit__input-money edit__input-money--tax-tip"
               type="number"
               id="tax"
               name="tax"
@@ -323,7 +327,7 @@ const EditBillPage = () => {
               onChange={handleBill}
             />
             <input
-              className="edit__input"
+              className="edit__input-money edit__input-money--tax-tip"
               type="number"
               id="tip"
               name="tip"
@@ -336,7 +340,7 @@ const EditBillPage = () => {
         <div className="edit__item edit__item--end">
           <p className="edit__text">Total</p>
           <input
-            className="edit__input edit__input--gray"
+            className="edit__input-money edit__input-money--bill-total"
             type="number"
             id="total"
             name="total"
