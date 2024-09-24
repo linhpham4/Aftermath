@@ -2,27 +2,12 @@
 @use "../../styles/variables.scss" as *;
 
 .editPerson {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  z-index: 1;
-  left: 0;
+  @include overlay;
 
   &__container {
-    width: 90%;
-    max-width: 30rem;
-    height: 20rem;
-    padding: 2rem;
-    background-color: $yellow;
-    box-shadow: 0 10px $blue;
-    border-radius: 8px;
-    display: flex;
     flex-direction: column;
     align-items: flex-end;
+    @include modal-container;
   }
 
   &__close {
