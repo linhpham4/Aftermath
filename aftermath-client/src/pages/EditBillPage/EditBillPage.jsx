@@ -213,7 +213,6 @@ const EditBillPage = () => {
     plusTaxTip();
   }, [bill]);
 
-  console.log(people);
 
   if (bill === initialBill) {
     return <h1>Loading...</h1>;

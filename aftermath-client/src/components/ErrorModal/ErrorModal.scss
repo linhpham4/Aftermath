@@ -1,0 +1,25 @@
+@use "../../styles/mixins.scss" as *;
+@use "../../styles/variables.scss" as *;
+
+.error {
+  @include overlay;
+
+  &__container {
+    @include modal-container;
+    height: 13rem;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+
+  &__close {
+    align-self: flex-end;
+    margin-top: -1.5rem;
+    @include close;
+  }
+
+  &__text {
+    text-align: center;
+    padding-bottom: 1rem;
+    @include large;
+  }
+}

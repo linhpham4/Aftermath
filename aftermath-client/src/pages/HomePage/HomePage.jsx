@@ -4,6 +4,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import LoadingModal from "../../components/LoadingModal/LoadingModal";
+import ErrorModal from "../../components/ErrorModal/ErrorModal";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -11,7 +12,8 @@ const HomePage = () => {
   const { personId } = useParams();
   const [image, setImage] = useState(null);
   const [hostId, setHostId] = useState (0);
-  const [open, setOpen] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
+  const [loadingOpen, setLoadingOpen] = useState(false);
 
   // If home page is accessed from root directory, create new person to set as host
   const declareHost = async() => {
@@ -38,7 +40,12 @@ const HomePage = () => {
   // POST request to send image to server public/images folder
   const handleSubmit = async(event) => {
     event.preventDefault();
-    setOpen(true);
+
+    if (!image) {
+      return setErrorOpen(true);
+    }
+
+    setLoadingOpen(true);
     const response = await axios.post(`${BASE_URL}/bills/${hostId}`, image);
     const billId = response.data.id;
     navigate(`/host/${hostId}/edit/${billId}`);
@@ -83,7 +90,8 @@ const HomePage = () => {
         Upload
       </button>
 
-      <LoadingModal open={open} />
+      <ErrorModal open={errorOpen} close={() => setErrorOpen(false)}/>
+      <LoadingModal open={loadingOpen} />
     </main>
   );
 };
