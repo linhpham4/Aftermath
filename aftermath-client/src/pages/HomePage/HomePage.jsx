@@ -3,6 +3,7 @@ import logo from "../../assets/logo/aftermath_logo.svg";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import LoadingModal from "../../components/LoadingModal/LoadingModal";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -80,6 +81,8 @@ const HomePage = () => {
       <button className="home__button" form="bill" type="submit">
         Upload
       </button>
+
+      <LoadingModal />
     </main>
   );
 };

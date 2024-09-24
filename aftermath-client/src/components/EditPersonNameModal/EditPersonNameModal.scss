@@ -5,7 +5,6 @@
   @include overlay;
 
   &__container {
-    flex-direction: column;
     align-items: flex-end;
     @include modal-container;
   }
