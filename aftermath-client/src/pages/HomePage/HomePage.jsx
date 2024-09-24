@@ -11,6 +11,7 @@ const HomePage = () => {
   const { personId } = useParams();
   const [image, setImage] = useState(null);
   const [hostId, setHostId] = useState (0);
+  const [open, setOpen] = useState(false);
 
   // If home page is accessed from root directory, create new person to set as host
   const declareHost = async() => {
@@ -37,7 +38,7 @@ const HomePage = () => {
   // POST request to send image to server public/images folder
   const handleSubmit = async(event) => {
     event.preventDefault();
-    alert("Uploading image now! Please wait");
+    setOpen(true);
     const response = await axios.post(`${BASE_URL}/bills/${hostId}`, image);
     const billId = response.data.id;
     navigate(`/host/${hostId}/edit/${billId}`);
@@ -82,7 +83,7 @@ const HomePage = () => {
         Upload
       </button>
 
-      <LoadingModal />
+      <LoadingModal open={open} />
     </main>
   );
 };

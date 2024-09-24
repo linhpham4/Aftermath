@@ -5,9 +5,11 @@
   @include overlay;
 
   &__container {
+    @include modal-container;
     justify-content: space-evenly;
     align-items: center;
-    @include modal-container;
+    width: 25rem;
+    height: 15rem;
   }
 
   &__text {
