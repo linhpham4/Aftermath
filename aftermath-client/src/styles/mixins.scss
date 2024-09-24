@@ -24,7 +24,7 @@
   padding: 0.5rem 2rem;
   border: none;
   border-radius: 8px;
-  box-shadow: 0 10px $blue;
+  box-shadow: 0 12px $blue;
   transition: 0.15s;
   @include medium;
 
@@ -38,6 +38,21 @@
     cursor: pointer;
     margin-top: 15px;
     box-shadow: 0 5px $blue;
+  }
+}
+
+@mixin close {
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+  transition: 0.2s;
+  &::before {
+    content: url("../../assets/icons/close.svg");
+    transform: scale(1.5);
+    display: inline-block;
+  }
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.1);
   }
 }
 
