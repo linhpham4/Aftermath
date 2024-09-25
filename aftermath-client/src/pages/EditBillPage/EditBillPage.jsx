@@ -296,7 +296,7 @@ const EditBillPage = () => {
                 })}
               </div>
               <p className="edit__item-split">{(
-                item.assigned_people.length > 0
+                item.assigned_people.length > 1
                 ? `$ ${Number(item.item_total/item.assigned_people.length).toFixed(2)} each`
                 : ""
               )}</p>
