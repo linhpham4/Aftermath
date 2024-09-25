@@ -273,26 +273,33 @@ const EditBillPage = () => {
               />
             </div>
 
-            <div className="edit__people-container">
-              {/* Dynamically render radio buttons based on list of people ----- */}
-              {people.map((person) => {
-                return (
-                  <div className="edit__person-container" key={person.id}>
-                    <label className="edit__label">
-                      <input
-                        className={`edit__checkbox`}
-                        type="checkbox"
-                        id={`item${item.id}_person${person.id}`}
-                        name="assign"
-                        value={person.name}
-                        onChange={() => handleAssign(item.id, person.id)}
-                        style={{ filter: `hue-rotate(${person.color}deg)` }}
-                      />
-                      {person.name}
-                    </label>
-                  </div>
-                );
-              })}
+            <div className="edit__item-bottom">
+              <div className="edit__people-container">
+                {/* Dynamically render radio buttons based on list of people ----- */}
+                {people.map((person) => {
+                  return (
+                    <div className="edit__person-container" key={person.id}>
+                      <label className="edit__label">
+                        <input
+                          className={`edit__checkbox`}
+                          type="checkbox"
+                          id={`item${item.id}_person${person.id}`}
+                          name="assign"
+                          value={person.name}
+                          onChange={() => handleAssign(item.id, person.id)}
+                          style={{ filter: `hue-rotate(${person.color}deg)` }}
+                        />
+                        {person.name}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="edit__item-split">{(
+                item.assigned_people.length > 0
+                ? `$ ${Number(item.item_total/item.assigned_people.length).toFixed(2)} each`
+                : ""
+              )}</p>
             </div>
           </div>
         ))}
